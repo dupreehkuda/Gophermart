@@ -39,6 +39,12 @@ func (h handlers) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token, err := internal.GenerateJWT(logCredit.Login)
+	if err != nil {
+		h.logger.Error("Error while generating jwt", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	http.SetCookie(w, &http.Cookie{
 		Name:  "JWT",
 		Value: token,

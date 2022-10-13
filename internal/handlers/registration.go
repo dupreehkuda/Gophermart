@@ -31,6 +31,11 @@ func (h handlers) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, occupied, err := h.processor.Register(regCredit.Login, regCredit.Password)
+	if err != nil {
+		h.logger.Error("Unable to call processor", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	if occupied {
 		h.logger.Info("Login occupied", zap.String("login", regCredit.Login))
@@ -39,6 +44,12 @@ func (h handlers) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token, err := internal.GenerateJWT(regCredit.Login)
+	if err != nil {
+		h.logger.Error("Error while generating jwt", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	http.SetCookie(w, &http.Cookie{
 		Name:  "JWT",
 		Value: token,

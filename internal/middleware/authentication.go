@@ -19,12 +19,10 @@ func (m middleware) CheckToken(next http.Handler) http.Handler {
 			return
 		}
 
-		str := token.Value
-
 		var signingKey = []byte(os.Getenv("secret"))
 
 		if token != nil {
-			token, err := jwt.Parse(str, func(token *jwt.Token) (interface{}, error) {
+			token, err := jwt.Parse(token.Value, func(token *jwt.Token) (interface{}, error) {
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 					w.WriteHeader(http.StatusUnauthorized)
 					_, err := w.Write([]byte("You're Unauthorized"))
