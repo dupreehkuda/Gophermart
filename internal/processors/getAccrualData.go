@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"go.uber.org/zap"
 )
@@ -16,7 +17,8 @@ type accrualData struct {
 
 func (p processors) getAccrualData(order int) (string, int, error) {
 	var respData accrualData
-	var requestURL = p.sysAddr + "/api/orders/" + string(rune(order))
+	var requestURL = p.sysAddr + "/api/orders/" + strconv.Itoa(order)
+	p.logger.Debug("debugging call to accrual", zap.Any("url", requestURL))
 
 	resp, err := http.Get(requestURL)
 	if err != nil {
@@ -36,7 +38,7 @@ func (p processors) getAccrualData(order int) (string, int, error) {
 	}
 	defer resp.Body.Close()
 
-	p.logger.Debug("body", zap.Any("json", string(body)))
+	p.logger.Debug("debugging call to accrual", zap.Any("body json", string(body)))
 
 	if err := json.Unmarshal(body, &respData); err != nil {
 		p.logger.Error("Error unmarshalling body", zap.Error(err))
