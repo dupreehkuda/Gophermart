@@ -16,7 +16,7 @@ type accrualData struct {
 
 func (p processors) getAccrualData(order int) (string, int, error) {
 	var respData accrualData
-	var requestURL = p.sysAddr + "/" + string(rune(order))
+	var requestURL = p.sysAddr + "/api/orders/" + string(rune(order))
 
 	resp, err := http.Get(requestURL)
 	if err != nil {
