@@ -15,7 +15,7 @@ func main() {
 
 	cfg := configuration.New(log)
 	store := storage.New(cfg.DatabasePath, log)
-	proc := processors.New(store, log)
+	proc := processors.New(store, log, cfg.AccrualAddress)
 	service := handlers.New(store, proc, log)
 	mware := middleware.New(proc, log)
 

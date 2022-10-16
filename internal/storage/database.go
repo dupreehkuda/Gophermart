@@ -36,10 +36,9 @@ create table if not exists orders
         unique,
     total      money,
     login     text not null
-        unique
         references users,
     pointspaid integer,
-    orderdate  date,
+    orderdate  timestamp,
     accrual    integer,
     status     text
 );`)

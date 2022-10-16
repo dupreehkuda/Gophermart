@@ -36,7 +36,7 @@ func (s server) Launch(address string) {
 
 			r.Route("/orders", func(r chi.Router) {
 				r.Post("/", s.handlers.AddOrder)
-				r.Get("/", nil)
+				r.Get("/", s.handlers.GetOrders)
 			})
 
 			r.Route("/balance", func(r chi.Router) {
