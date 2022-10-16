@@ -34,6 +34,9 @@ func (p processors) getAccrualData(order int) (string, int, error) {
 		p.logger.Error("Error reading body", zap.Error(err))
 		return "", 0, err
 	}
+	defer resp.Body.Close()
+
+	p.logger.Debug("body", zap.Any("json", string(body)))
 
 	if err := json.Unmarshal(body, &respData); err != nil {
 		p.logger.Error("Error unmarshalling body", zap.Error(err))

@@ -37,7 +37,6 @@ func (m middleware) CheckToken(next http.Handler) http.Handler {
 
 			if err != nil {
 				w.WriteHeader(http.StatusUnauthorized)
-				m.logger.Error("fuck", zap.Any("token", token), zap.Error(err))
 				_, err := w.Write([]byte("You're Unauthorized due to error"))
 				if err != nil {
 					m.logger.Error("Unable to write response", zap.Error(err))
