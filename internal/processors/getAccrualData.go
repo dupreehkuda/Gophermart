@@ -10,12 +10,12 @@ import (
 )
 
 type accrualData struct {
-	Order   string `json:"order"`
-	Status  string `json:"status"`
-	Accrual int    `json:"accrual"`
+	Order   string  `json:"order"`
+	Status  string  `json:"status"`
+	Accrual float32 `json:"accrual"`
 }
 
-func (p processors) getAccrualData(order int) (string, int, error) {
+func (p processors) getAccrualData(order int) (string, float32, error) {
 	var respData accrualData
 	var requestURL = p.sysAddr + "/api/orders/" + strconv.Itoa(order)
 	p.logger.Debug("debugging call to accrual", zap.Any("url", requestURL))

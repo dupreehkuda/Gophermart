@@ -37,9 +37,9 @@ create table if not exists orders
     total      money,
     login     text not null
         references users,
-    pointspaid integer,
+    pointspaid float,
     orderdate  timestamp,
-    accrual    integer,
+    accrual    float,
     status     text
 );`)
 	batch.Queue(`

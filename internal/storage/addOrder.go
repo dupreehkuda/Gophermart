@@ -29,7 +29,7 @@ func (s storage) CheckOrder(login string, order int) (bool, bool, error) {
 	return true, true, nil
 }
 
-func (s storage) NewOrder(login, status string, order, accrual int) error {
+func (s storage) NewOrder(login, status string, order int, accrual float32) error {
 	conn, err := s.pool.Acquire(context.Background())
 	if err != nil {
 		s.logger.Error("Error while acquiring connection", zap.Error(err))
