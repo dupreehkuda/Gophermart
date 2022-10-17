@@ -14,7 +14,7 @@ type Stored interface {
 	LoginUser(login string) (string, string, error)
 	CheckUser(login string) (bool, error)
 	CheckOrder(login string, order int) (bool, bool, error)
-	NewOrder(login, status string, order int, accrual float32) error
+	NewOrder(login, status string, order int, accrual float64) error
 	GetOrders(login string) ([]byte, error)
 }
 

@@ -13,14 +13,14 @@ import (
 type dbOrder struct {
 	Number     int              `db:"orderID"`
 	Status     string           `db:"status"`
-	Accrual    pgtype.Float4    `db:"accrual"`
+	Accrual    pgtype.Float8    `db:"accrual"`
 	UploadedAt pgtype.Timestamp `db:"orderdate"`
 }
 
 type order struct {
 	Number     int     `json:"number"`
 	Status     string  `json:"status"`
-	Accrual    float32 `json:"accrual,omitempty"`
+	Accrual    float64 `json:"accrual,omitempty"`
 	UploadedAt string  `json:"uploaded_at"`
 }
 
