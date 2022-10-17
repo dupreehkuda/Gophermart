@@ -2,11 +2,10 @@ package processors
 
 import (
 	"encoding/json"
+	"go.uber.org/zap"
 	"io/ioutil"
 	"net/http"
 	"strconv"
-
-	"go.uber.org/zap"
 )
 
 type accrualData struct {
@@ -29,6 +28,10 @@ func (p processors) getAccrualData(order int) (string, float64, error) {
 	if resp.StatusCode == 500 {
 		p.logger.Error("Code 500 when getting accrual")
 		return "", 0, err
+	}
+
+	if resp.StatusCode == 429 {
+		p.logger.Debug("A lot of requests", zap.Any("headers", resp.Request))
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)

@@ -13,7 +13,7 @@ import (
 type dbOrder struct {
 	Number     int              `db:"orderID"`
 	Status     string           `db:"status"`
-	Accrual    pgtype.Float8    `db:"accrual"`
+	Accrual    pgtype.Float4    `db:"accrual"`
 	UploadedAt pgtype.Timestamp `db:"orderdate"`
 }
 
@@ -56,7 +56,7 @@ func (s storage) GetOrders(login string) ([]byte, error) {
 		data = append(data, order{
 			Number:     val.Number,
 			Status:     val.Status,
-			Accrual:    val.Accrual.Float,
+			Accrual:    float64(val.Accrual.Float),
 			UploadedAt: val.UploadedAt.Time.Format(time.RFC3339),
 		})
 	}
