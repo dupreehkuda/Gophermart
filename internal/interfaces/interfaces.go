@@ -1,6 +1,10 @@
 package interfaces
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/shopspring/decimal"
+)
 
 type Handlers interface {
 	Register(w http.ResponseWriter, r *http.Request)
@@ -14,14 +18,14 @@ type Stored interface {
 	LoginUser(login string) (string, string, error)
 	CheckUser(login string) (bool, error)
 	CheckOrder(login string, order int) (bool, bool, error)
-	NewOrder(login, status string, order int, accrual float64) error
+	NewOrder(login, status string, order int, accrual decimal.Decimal) error
 	GetOrders(login string) ([]byte, error)
 }
 
 type Processor interface {
 	Register(login, password string) (string, bool, error)
 	Login(login, password string) (string, bool, error)
-	NewOrder(login string, order int) (bool, bool, bool, error)
+	NewOrder(login string, order int) error
 	GetOrders(login string) ([]byte, error)
 }
 

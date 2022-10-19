@@ -1,9 +1,12 @@
 package handlers
 
 import (
+	"errors"
 	"io"
 	"net/http"
 	"strconv"
+
+	orderr "github.com/dupreehkuda/Gophermart/internal"
 
 	"go.uber.org/zap"
 )
@@ -25,24 +28,25 @@ func (h handlers) AddOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	valid, exists, usersOrder, err := h.processor.NewOrder(login, order)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		h.logger.Error("Adding order error", zap.Error(err))
+	err = h.processor.NewOrder(login, order)
+	if err == nil {
+		w.WriteHeader(http.StatusAccepted)
 		return
 	}
 
 	switch {
-	case !valid:
+	case errors.Is(err, orderr.InvalidNum):
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
-	case exists && !usersOrder:
+	case errors.Is(err, orderr.Occupied):
 		w.WriteHeader(http.StatusConflict)
 		return
-	case exists && usersOrder:
+	case errors.Is(err, orderr.Uploaded):
 		w.WriteHeader(http.StatusOK)
 		return
 	default:
-		w.WriteHeader(http.StatusAccepted)
+		w.WriteHeader(http.StatusInternalServerError)
+		h.logger.Error("Adding order error", zap.Error(err))
+		return
 	}
 }

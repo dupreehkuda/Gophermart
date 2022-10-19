@@ -2,9 +2,8 @@ package storage
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v4"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
 )
 
@@ -37,9 +36,9 @@ create table if not exists orders
     total      money,
     login     text not null
         references users,
-    pointspaid float,
+    pointspaid numeric,
     orderdate  timestamp,
-    accrual    float,
+    accrual    numeric,
     status     text
 );`)
 	batch.Queue(`

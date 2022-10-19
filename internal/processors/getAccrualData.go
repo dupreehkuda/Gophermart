@@ -2,10 +2,12 @@ package processors
 
 import (
 	"encoding/json"
-	"go.uber.org/zap"
 	"io/ioutil"
 	"net/http"
 	"strconv"
+
+	"github.com/shopspring/decimal"
+	"go.uber.org/zap"
 )
 
 type accrualData struct {
@@ -14,7 +16,7 @@ type accrualData struct {
 	Accrual float64 `json:"accrual"`
 }
 
-func (p processors) getAccrualData(order int) (string, float64, error) {
+func (p processors) getAccrualData(order int) (string, decimal.Decimal, error) {
 	var respData accrualData
 	var requestURL = p.sysAddr + "/api/orders/" + strconv.Itoa(order)
 	p.logger.Debug("debugging call to accrual", zap.Any("url", requestURL))
@@ -22,12 +24,12 @@ func (p processors) getAccrualData(order int) (string, float64, error) {
 	resp, err := http.Get(requestURL)
 	if err != nil {
 		p.logger.Error("Error when making request", zap.Error(err))
-		return "", 0, err
+		return "", decimal.Zero, err
 	}
 
 	if resp.StatusCode == 500 {
 		p.logger.Error("Code 500 when getting accrual")
-		return "", 0, err
+		return "", decimal.Zero, err
 	}
 
 	if resp.StatusCode == 429 {
@@ -37,7 +39,7 @@ func (p processors) getAccrualData(order int) (string, float64, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		p.logger.Error("Error reading body", zap.Error(err))
-		return "", 0, err
+		return "", decimal.Zero, err
 	}
 	defer resp.Body.Close()
 
@@ -45,8 +47,8 @@ func (p processors) getAccrualData(order int) (string, float64, error) {
 
 	if err := json.Unmarshal(body, &respData); err != nil {
 		p.logger.Error("Error unmarshalling body", zap.Error(err))
-		return "", 0, err
+		return "", decimal.Zero, err
 	}
 
-	return respData.Status, respData.Accrual, nil
+	return respData.Status, decimal.NewFromFloat(respData.Accrual), nil
 }

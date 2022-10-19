@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"encoding/json"
+	"github.com/shopspring/decimal"
 	"log"
 	"time"
 
@@ -13,15 +14,15 @@ import (
 type dbOrder struct {
 	Number     int              `db:"orderID"`
 	Status     string           `db:"status"`
-	Accrual    pgtype.Float4    `db:"accrual"`
+	Accrual    pgtype.Numeric   `db:"accrual"`
 	UploadedAt pgtype.Timestamp `db:"orderdate"`
 }
 
 type order struct {
-	Number     int     `json:"number"`
-	Status     string  `json:"status"`
-	Accrual    float64 `json:"accrual,omitempty"`
-	UploadedAt string  `json:"uploaded_at"`
+	Number     int             `json:"number"`
+	Status     string          `json:"status"`
+	Accrual    decimal.Decimal `json:"accrual,omitempty"`
+	UploadedAt string          `json:"uploaded_at"`
 }
 
 func (s storage) GetOrders(login string) ([]byte, error) {
@@ -56,7 +57,7 @@ func (s storage) GetOrders(login string) ([]byte, error) {
 		data = append(data, order{
 			Number:     val.Number,
 			Status:     val.Status,
-			Accrual:    float64(val.Accrual.Float),
+			Accrual:    decimal.NewFromBigInt(val.Accrual.Int, val.Accrual.Exp),
 			UploadedAt: val.UploadedAt.Time.Format(time.RFC3339),
 		})
 	}
