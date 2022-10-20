@@ -14,7 +14,7 @@ import (
 type dbOrder struct {
 	Number     int              `db:"orderID"`
 	Status     string           `db:"status"`
-	Accrual    pgtype.Numeric   `db:"accrual"`
+	Accrual    decimal.Decimal  `db:"accrual"`
 	UploadedAt pgtype.Timestamp `db:"orderdate"`
 }
 
@@ -57,7 +57,7 @@ func (s storage) GetOrders(login string) ([]byte, error) {
 		data = append(data, order{
 			Number:     val.Number,
 			Status:     val.Status,
-			Accrual:    decimal.NewFromBigInt(val.Accrual.Int, val.Accrual.Exp),
+			Accrual:    val.Accrual,
 			UploadedAt: val.UploadedAt.Time.Format(time.RFC3339),
 		})
 	}
