@@ -2,6 +2,9 @@ package storage
 
 import (
 	"context"
+	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
+	"github.com/jackc/pgx/v5"
+	"github.com/shopspring/decimal"
 
 	"go.uber.org/zap"
 )
@@ -14,11 +17,21 @@ func (s storage) CreateUser(login string, passwordHash string, passwordSalt stri
 	}
 	defer conn.Release()
 
-	_, err = conn.Query(context.Background(), "INSERT INTO users(login, passwordhash, passwordsalt) VALUES ($1, $2, $3);", login, passwordHash, passwordSalt)
-	if err != nil {
-		s.logger.Error("Error while inserting", zap.Error(err))
-		return err
-	}
+	pgxdecimal.Register(conn.Conn().TypeMap())
+
+	batch := &pgx.Batch{}
+
+	batch.Queue("INSERT INTO users(login, passwordhash, passwordsalt) VALUES ($1, $2, $3);", login, passwordHash, passwordSalt)
+	batch.Queue("INSERT INTO accrual(login, points, withdrawn) VALUES ($1, $2, $3);", login, decimal.Zero, decimal.Zero)
+
+	br := conn.SendBatch(context.Background(), batch)
+	defer func(br pgx.BatchResults) {
+		err := br.Close()
+		if err != nil {
+			s.logger.Error("Error while inserting", zap.Error(err))
+			return
+		}
+	}(br)
 
 	return nil
 }

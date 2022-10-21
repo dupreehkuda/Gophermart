@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
+	"github.com/jackc/pgx/v5"
 	"time"
 
 	"github.com/shopspring/decimal"
@@ -41,6 +42,20 @@ func (s storage) NewOrder(login, status string, order int, accrual decimal.Decim
 	defer conn.Release()
 
 	pgxdecimal.Register(conn.Conn().TypeMap())
+
+	batch := &pgx.Batch{}
+
+	batch.Queue("insert into orders(login, orderid, orderdate, status, accrual) values ($1, $2, $3, $4, $5);", login, order, time.Now().Format("2006-01-02 15:04:05"), status, accrual)
+	batch.Queue("update accrual set points = points + $1 where login = $2", accrual, login)
+
+	br := conn.SendBatch(context.Background(), batch)
+	defer func(br pgx.BatchResults) {
+		err := br.Close()
+		if err != nil {
+			s.logger.Error("Error while inserting", zap.Error(err))
+			return
+		}
+	}(br)
 
 	_, err = conn.Query(context.Background(), "insert into orders(login, orderid, orderdate, status, accrual) values ($1, $2, $3, $4, $5);", login, order, time.Now().Format("2006-01-02 15:04:05"), status, accrual)
 	if err != nil {

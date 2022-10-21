@@ -3,8 +3,8 @@ package storage
 import (
 	"context"
 	"encoding/json"
+	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
 	"github.com/shopspring/decimal"
-	"log"
 	"time"
 
 	"github.com/jackc/pgtype"
@@ -12,14 +12,14 @@ import (
 )
 
 type dbOrder struct {
-	Number     int              `db:"orderID"`
+	Number     string           `db:"orderID"`
 	Status     string           `db:"status"`
 	Accrual    decimal.Decimal  `db:"accrual"`
 	UploadedAt pgtype.Timestamp `db:"orderdate"`
 }
 
 type order struct {
-	Number     int             `json:"number"`
+	Number     string          `json:"number"`
 	Status     string          `json:"status"`
 	Accrual    decimal.Decimal `json:"accrual,omitempty"`
 	UploadedAt string          `json:"uploaded_at"`
@@ -36,6 +36,8 @@ func (s storage) GetOrders(login string) ([]byte, error) {
 	}
 	defer conn.Release()
 
+	pgxdecimal.Register(conn.Conn().TypeMap())
+
 	rows, err := conn.Query(context.Background(), "select orderid, status, accrual, orderdate from orders where login = $1 order by orderdate;", login)
 	if err != nil {
 		s.logger.Error("Error while getting orders", zap.Error(err))
@@ -47,7 +49,8 @@ func (s storage) GetOrders(login string) ([]byte, error) {
 		var d dbOrder
 		err := rows.Scan(&d.Number, &d.Status, &d.Accrual, &d.UploadedAt)
 		if err != nil {
-			log.Fatal(err)
+			s.logger.Error("Error while scanning rows", zap.Error(err))
+			return nil, err
 		}
 		dataFromDB = append(dataFromDB, d)
 	}

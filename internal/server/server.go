@@ -40,9 +40,9 @@ func (s server) Launch(address string) {
 			})
 
 			r.Route("/balance", func(r chi.Router) {
-				r.Get("/", nil)
-				r.Post("/withdraw", nil)
-				r.Get("/withdrawals", nil)
+				r.Get("/", s.handlers.GetBalance)
+				r.Post("/withdraw", s.handlers.WithdrawPoints)
+				r.Get("/withdrawals", s.handlers.GetWithdrawals)
 			})
 		})
 	})

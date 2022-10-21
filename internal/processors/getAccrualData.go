@@ -19,7 +19,6 @@ type accrualData struct {
 func (p processors) getAccrualData(order int) (string, decimal.Decimal, error) {
 	var respData accrualData
 	var requestURL = p.sysAddr + "/api/orders/" + strconv.Itoa(order)
-	p.logger.Debug("debugging call to accrual", zap.Any("url", requestURL))
 
 	resp, err := http.Get(requestURL)
 	if err != nil {
@@ -32,6 +31,7 @@ func (p processors) getAccrualData(order int) (string, decimal.Decimal, error) {
 		return "", decimal.Zero, err
 	}
 
+	// todo: add repeating request logic
 	if resp.StatusCode == 429 {
 		p.logger.Debug("A lot of requests", zap.Any("headers", resp.Request))
 	}
@@ -42,8 +42,6 @@ func (p processors) getAccrualData(order int) (string, decimal.Decimal, error) {
 		return "", decimal.Zero, err
 	}
 	defer resp.Body.Close()
-
-	p.logger.Debug("debugging call to accrual", zap.Any("body json", string(body)))
 
 	if err := json.Unmarshal(body, &respData); err != nil {
 		p.logger.Error("Error unmarshalling body", zap.Error(err))

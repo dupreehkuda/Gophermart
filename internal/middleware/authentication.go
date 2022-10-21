@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"os"
 
@@ -14,6 +15,10 @@ func (m middleware) CheckToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token, err := r.Cookie("JWT")
 		if err != nil {
+			if errors.Is(err, http.ErrNoCookie) {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
 			m.logger.Error("Error occurred while unpacking cookies", zap.Error(err))
 			w.WriteHeader(http.StatusInternalServerError)
 			return

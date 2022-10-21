@@ -49,6 +49,4 @@ func (h handlers) Login(w http.ResponseWriter, r *http.Request) {
 		Name:  "JWT",
 		Value: token,
 	})
-
-	w.WriteHeader(http.StatusOK)
 }

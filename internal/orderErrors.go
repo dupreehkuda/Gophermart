@@ -5,9 +5,9 @@ import (
 )
 
 var (
-	InvalidNum = errors.New("invalid order number")
-	Occupied   = errors.New("occupied order")
-	Uploaded   = errors.New("already uploaded")
+	OrderInvalidNum = errors.New("invalid order number")
+	OrderOccupied   = errors.New("occupied order")
+	OrderUploaded   = errors.New("already uploaded")
 )
 
 //type AddOrderError struct {

@@ -7,7 +7,7 @@ import (
 func (p processors) NewOrder(login string, order int) error {
 	valid := luhnValid(order)
 	if !valid {
-		return orderr.InvalidNum
+		return orderr.OrderInvalidNum
 	}
 
 	exists, usersOrder, err := p.storage.CheckOrder(login, order)
@@ -17,9 +17,9 @@ func (p processors) NewOrder(login string, order int) error {
 
 	if exists {
 		if !usersOrder {
-			return orderr.Occupied
+			return orderr.OrderOccupied
 		}
-		return orderr.Uploaded
+		return orderr.OrderUploaded
 	}
 
 	status, accrual, err := p.getAccrualData(order)

@@ -54,6 +54,4 @@ func (h handlers) Register(w http.ResponseWriter, r *http.Request) {
 		Name:  "JWT",
 		Value: token,
 	})
-
-	w.WriteHeader(http.StatusOK)
 }

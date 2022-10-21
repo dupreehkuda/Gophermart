@@ -11,6 +11,9 @@ type Handlers interface {
 	Login(w http.ResponseWriter, r *http.Request)
 	AddOrder(w http.ResponseWriter, r *http.Request)
 	GetOrders(w http.ResponseWriter, r *http.Request)
+	GetBalance(w http.ResponseWriter, r *http.Request)
+	WithdrawPoints(w http.ResponseWriter, r *http.Request)
+	GetWithdrawals(w http.ResponseWriter, r *http.Request)
 }
 
 type Stored interface {
@@ -20,6 +23,10 @@ type Stored interface {
 	CheckOrder(login string, order int) (bool, bool, error)
 	NewOrder(login, status string, order int, accrual decimal.Decimal) error
 	GetOrders(login string) ([]byte, error)
+	GetBalance(login string) ([]byte, error)
+	GetWithdrawals(login string) ([]byte, error)
+	CheckPoints(order int, sum decimal.Decimal) (bool, error)
+	WithdrawPoints(order int, sum decimal.Decimal) error
 }
 
 type Processor interface {
@@ -27,6 +34,9 @@ type Processor interface {
 	Login(login, password string) (string, bool, error)
 	NewOrder(login string, order int) error
 	GetOrders(login string) ([]byte, error)
+	GetBalance(login string) ([]byte, error)
+	GetWithdrawals(login string) ([]byte, error)
+	WithdrawPoints(order string, sum decimal.Decimal) error
 }
 
 type Middleware interface {

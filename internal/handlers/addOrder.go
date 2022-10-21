@@ -35,13 +35,13 @@ func (h handlers) AddOrder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	switch {
-	case errors.Is(err, orderr.InvalidNum):
+	case errors.Is(err, orderr.OrderInvalidNum):
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
-	case errors.Is(err, orderr.Occupied):
+	case errors.Is(err, orderr.OrderOccupied):
 		w.WriteHeader(http.StatusConflict)
 		return
-	case errors.Is(err, orderr.Uploaded):
+	case errors.Is(err, orderr.OrderUploaded):
 		w.WriteHeader(http.StatusOK)
 		return
 	default:
