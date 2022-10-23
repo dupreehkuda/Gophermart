@@ -1,4 +1,4 @@
-package processors
+package actions
 
 func luhnValid(number int) bool {
 	return (number%10+checksum(number/10))%10 == 0

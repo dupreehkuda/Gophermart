@@ -3,27 +3,11 @@ package storage
 import (
 	"context"
 	"encoding/json"
-	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
-	"github.com/shopspring/decimal"
 	"time"
 
-	"github.com/jackc/pgtype"
+	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
 	"go.uber.org/zap"
 )
-
-type dbOrder struct {
-	Number     string           `db:"orderID"`
-	Status     string           `db:"status"`
-	Accrual    decimal.Decimal  `db:"accrual"`
-	UploadedAt pgtype.Timestamp `db:"orderdate"`
-}
-
-type order struct {
-	Number     string          `json:"number"`
-	Status     string          `json:"status"`
-	Accrual    decimal.Decimal `json:"accrual,omitempty"`
-	UploadedAt string          `json:"uploaded_at"`
-}
 
 func (s storage) GetOrders(login string) ([]byte, error) {
 	var dataFromDB []dbOrder

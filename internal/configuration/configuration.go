@@ -2,9 +2,10 @@ package configuration
 
 import (
 	"flag"
+	"os"
+
 	"github.com/caarlos0/env/v6"
 	"go.uber.org/zap"
-	"os"
 )
 
 type config struct {

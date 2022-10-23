@@ -2,8 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
-	"go.uber.org/zap"
 	"net/http"
+
+	"go.uber.org/zap"
 
 	"github.com/dupreehkuda/Gophermart/internal"
 )
@@ -30,9 +31,9 @@ func (h handlers) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, occupied, err := h.processor.Register(regCredit.Login, regCredit.Password)
+	_, occupied, err := h.actions.Register(regCredit.Login, regCredit.Password)
 	if err != nil {
-		h.logger.Error("Unable to call processor", zap.Error(err))
+		h.logger.Error("Unable to call actions", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

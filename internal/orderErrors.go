@@ -5,15 +5,7 @@ import (
 )
 
 var (
-	OrderInvalidNum = errors.New("invalid order number")
-	OrderOccupied   = errors.New("occupied order")
-	OrderUploaded   = errors.New("already uploaded")
+	OrderInvalidNumError = errors.New("invalid order number")
+	OrderOccupiedError   = errors.New("occupied order")
+	OrderUploadedError   = errors.New("already uploaded")
 )
-
-//type AddOrderError struct {
-//	Err error
-//}
-//
-//func (r *AddOrderError) Error() string {
-//	return fmt.Sprintf("err %v", r.Err)
-//}

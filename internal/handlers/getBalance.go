@@ -9,7 +9,7 @@ import (
 func (h handlers) GetBalance(w http.ResponseWriter, r *http.Request) {
 	login := r.Context().Value("login").(string)
 
-	response, err := h.processor.GetBalance(login)
+	response, err := h.actions.GetBalance(login)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

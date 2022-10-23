@@ -3,28 +3,15 @@ package storage
 import (
 	"context"
 	"encoding/json"
-	"github.com/jackc/pgtype"
-	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
-	"github.com/shopspring/decimal"
-	"go.uber.org/zap"
 	"time"
+
+	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
+	"go.uber.org/zap"
 )
 
-type dbRespWithdrawal struct {
-	Order       string
-	Sum         decimal.Decimal
-	ProcessedAt pgtype.Timestamp
-}
-
-type respWithdrawal struct {
-	Order       string          `json:"order"`
-	Sum         decimal.Decimal `json:"sum"`
-	ProcessedAt string          `json:"processed_at"`
-}
-
 func (s storage) GetWithdrawals(login string) ([]byte, error) {
-	dbResp := []dbRespWithdrawal{}
-	resp := []respWithdrawal{}
+	dbResp := []dbWithdrawal{}
+	resp := []withdrawal{}
 
 	conn, err := s.pool.Acquire(context.Background())
 	if err != nil {
@@ -43,7 +30,7 @@ func (s storage) GetWithdrawals(login string) ([]byte, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var r dbRespWithdrawal
+		var r dbWithdrawal
 		err := rows.Scan(&r.Order, &r.Sum, &r.ProcessedAt)
 		if err != nil {
 			s.logger.Error("Error while scanning rows", zap.Error(err))
@@ -53,7 +40,7 @@ func (s storage) GetWithdrawals(login string) ([]byte, error) {
 	}
 
 	for _, val := range dbResp {
-		resp = append(resp, respWithdrawal{
+		resp = append(resp, withdrawal{
 			Order:       val.Order,
 			Sum:         val.Sum,
 			ProcessedAt: val.ProcessedAt.Time.Format(time.RFC3339),

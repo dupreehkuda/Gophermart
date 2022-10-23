@@ -2,10 +2,10 @@ package storage
 
 import (
 	"context"
+
 	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
 	"github.com/jackc/pgx/v5"
 	"github.com/shopspring/decimal"
-
 	"go.uber.org/zap"
 )
 

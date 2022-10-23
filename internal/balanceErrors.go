@@ -3,6 +3,6 @@ package internal
 import "errors"
 
 var (
-	BalanceInvalidOrder    = errors.New("invalid order number")
-	BalanceNotEnoughPoints = errors.New("not enough points")
+	BalanceInvalidOrderError    = errors.New("invalid order number")
+	BalanceNotEnoughPointsError = errors.New("not enough points")
 )

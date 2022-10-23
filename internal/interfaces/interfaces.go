@@ -29,7 +29,7 @@ type Stored interface {
 	WithdrawPoints(order int, sum decimal.Decimal) error
 }
 
-type Processor interface {
+type Actions interface {
 	Register(login, password string) (string, bool, error)
 	Login(login, password string) (string, bool, error)
 	NewOrder(login string, order int) error

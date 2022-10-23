@@ -7,7 +7,7 @@ import (
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
 
-	balerr "github.com/dupreehkuda/Gophermart/internal"
+	balanceError "github.com/dupreehkuda/Gophermart/internal"
 )
 
 type withdrawData struct {
@@ -31,17 +31,19 @@ func (h handlers) WithdrawPoints(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.processor.WithdrawPoints(data.Order, data.Sum)
+	err = h.actions.WithdrawPoints(data.Order, data.Sum)
 
 	switch err {
-	case balerr.BalanceNotEnoughPoints:
+	case balanceError.BalanceNotEnoughPointsError:
 		w.WriteHeader(http.StatusPaymentRequired)
 		return
-	case balerr.OrderInvalidNum:
+	case balanceError.OrderInvalidNumError:
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
+	case nil:
+		return
 	default:
-		h.logger.Error("Error call to processors", zap.Error(err))
+		h.logger.Error("Error call to actions", zap.Error(err))
 		return
 	}
 }

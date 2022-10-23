@@ -1,14 +1,15 @@
 package handlers
 
 import (
-	"go.uber.org/zap"
 	"net/http"
+
+	"go.uber.org/zap"
 )
 
 func (h handlers) GetOrders(w http.ResponseWriter, r *http.Request) {
 	login := r.Context().Value("login").(string)
 
-	data, err := h.processor.GetOrders(login)
+	data, err := h.actions.GetOrders(login)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		h.logger.Error("Getting order error", zap.Error(err))

@@ -2,8 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
-	"go.uber.org/zap"
 	"net/http"
+
+	"go.uber.org/zap"
 
 	"github.com/dupreehkuda/Gophermart/internal"
 )
@@ -25,7 +26,7 @@ func (h handlers) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, logged, err := h.processor.Login(logCredit.Login, logCredit.Password)
+	_, logged, err := h.actions.Login(logCredit.Login, logCredit.Password)
 	if err != nil {
 		h.logger.Error("Unable to authorize", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)

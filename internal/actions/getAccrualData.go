@@ -1,4 +1,4 @@
-package processors
+package actions
 
 import (
 	"encoding/json"
@@ -16,35 +16,35 @@ type accrualData struct {
 	Accrual float64 `json:"accrual"`
 }
 
-func (p processors) getAccrualData(order int) (string, decimal.Decimal, error) {
+func (a actions) getAccrualData(order int) (string, decimal.Decimal, error) {
 	var respData accrualData
-	var requestURL = p.sysAddr + "/api/orders/" + strconv.Itoa(order)
+	var requestURL = a.sysAddr + "/api/orders/" + strconv.Itoa(order)
 
 	resp, err := http.Get(requestURL)
 	if err != nil {
-		p.logger.Error("Error when making request", zap.Error(err))
+		a.logger.Error("Error when making request", zap.Error(err))
 		return "", decimal.Zero, err
 	}
 
-	if resp.StatusCode == 500 {
-		p.logger.Error("Code 500 when getting accrual")
+	if resp.StatusCode == http.StatusInternalServerError {
+		a.logger.Error("Code 500 when getting accrual")
 		return "", decimal.Zero, err
 	}
 
 	// todo: add repeating request logic
-	if resp.StatusCode == 429 {
-		p.logger.Debug("A lot of requests", zap.Any("headers", resp.Request))
+	if resp.StatusCode == http.StatusTooManyRequests {
+		a.logger.Debug("A lot of requests", zap.Any("headers", resp.Request))
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		p.logger.Error("Error reading body", zap.Error(err))
+		a.logger.Error("Error reading body", zap.Error(err))
 		return "", decimal.Zero, err
 	}
 	defer resp.Body.Close()
 
 	if err := json.Unmarshal(body, &respData); err != nil {
-		p.logger.Error("Error unmarshalling body", zap.Error(err))
+		a.logger.Error("Error unmarshalling body", zap.Error(err))
 		return "", decimal.Zero, err
 	}
 

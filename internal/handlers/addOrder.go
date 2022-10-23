@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	orderr "github.com/dupreehkuda/Gophermart/internal"
+	orderError "github.com/dupreehkuda/Gophermart/internal"
 
 	"go.uber.org/zap"
 )
@@ -28,20 +28,20 @@ func (h handlers) AddOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.processor.NewOrder(login, order)
+	err = h.actions.NewOrder(login, order)
 	if err == nil {
 		w.WriteHeader(http.StatusAccepted)
 		return
 	}
 
 	switch {
-	case errors.Is(err, orderr.OrderInvalidNum):
+	case errors.Is(err, orderError.OrderInvalidNumError):
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
-	case errors.Is(err, orderr.OrderOccupied):
+	case errors.Is(err, orderError.OrderOccupiedError):
 		w.WriteHeader(http.StatusConflict)
 		return
-	case errors.Is(err, orderr.OrderUploaded):
+	case errors.Is(err, orderError.OrderUploadedError):
 		w.WriteHeader(http.StatusOK)
 		return
 	default:

@@ -22,10 +22,6 @@ func (s storage) CheckPoints(order int, sum decimal.Decimal) (bool, error) {
 	pgxdecimal.Register(conn.Conn().TypeMap())
 
 	conn.QueryRow(context.Background(), "select points from accrual where login = (select login from orders where orderid = $1);", order).Scan(&currentPoints)
-	if err != nil {
-		s.logger.Error("Error while checking points", zap.Error(err))
-		return false, err
-	}
 
 	if currentPoints.LessThan(sum) {
 		return false, nil
