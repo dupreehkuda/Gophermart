@@ -50,10 +50,8 @@ func (s server) Run(address string) {
 	})
 
 	s.logger.Info("Server started", zap.String("port", address))
-	go func() {
-		err := http.ListenAndServe(address, r)
-		if err != nil {
-			s.logger.Error("Cant start server", zap.Error(err))
-		}
-	}()
+	err := http.ListenAndServe(address, r)
+	if err != nil {
+		s.logger.Error("Cant start server", zap.Error(err))
+	}
 }
