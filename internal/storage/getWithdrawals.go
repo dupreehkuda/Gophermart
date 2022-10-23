@@ -40,9 +40,10 @@ func (s storage) GetWithdrawals(login string) ([]byte, error) {
 	}
 
 	for _, val := range dbResp {
+		f, _ := val.Sum.Float64()
 		resp = append(resp, withdrawal{
 			Order:       val.Order,
-			Sum:         val.Sum,
+			Sum:         float32(f),
 			ProcessedAt: val.ProcessedAt.Time.Format(time.RFC3339),
 		})
 	}

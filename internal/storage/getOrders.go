@@ -39,12 +39,12 @@ func (s storage) GetOrders(login string) ([]byte, error) {
 		dataFromDB = append(dataFromDB, d)
 	}
 
-	// todo: figure out how to write without empty fields
 	for _, val := range dataFromDB {
+		f, _ := val.Accrual.Float64()
 		data = append(data, order{
 			Number:     val.Number,
 			Status:     val.Status,
-			Accrual:    val.Accrual,
+			Accrual:    float32(f),
 			UploadedAt: val.UploadedAt.Time.Format(time.RFC3339),
 		})
 	}

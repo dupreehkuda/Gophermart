@@ -13,10 +13,10 @@ type dbOrder struct {
 }
 
 type order struct {
-	Number     string          `json:"number"`
-	Status     string          `json:"status"`
-	Accrual    decimal.Decimal `json:"accrual,omitempty"`
-	UploadedAt string          `json:"uploaded_at"`
+	Number     string  `json:"number"`
+	Status     string  `json:"status"`
+	Accrual    float32 `json:"accrual,omitempty"`
+	UploadedAt string  `json:"uploaded_at"`
 }
 
 type dbWithdrawal struct {
@@ -26,7 +26,17 @@ type dbWithdrawal struct {
 }
 
 type withdrawal struct {
-	Order       string          `json:"order"`
-	Sum         decimal.Decimal `json:"sum"`
-	ProcessedAt string          `json:"processed_at"`
+	Order       string  `json:"order"`
+	Sum         float32 `json:"sum"`
+	ProcessedAt string  `json:"processed_at"`
+}
+
+type dbRespBalance struct {
+	Current   decimal.Decimal
+	Withdrawn decimal.Decimal
+}
+
+type respBalance struct {
+	Current   float32
+	Withdrawn float32
 }
