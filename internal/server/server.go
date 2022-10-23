@@ -39,6 +39,8 @@ func (s server) Launch(address string) {
 				r.Get("/", s.handlers.GetOrders)
 			})
 
+			r.Get("/withdrawals", s.handlers.GetWithdrawals)
+
 			r.Route("/balance", func(r chi.Router) {
 				r.Get("/", s.handlers.GetBalance)
 				r.Post("/withdraw", s.handlers.WithdrawPoints)
