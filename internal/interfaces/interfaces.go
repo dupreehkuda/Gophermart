@@ -21,12 +21,13 @@ type Stored interface {
 	LoginUser(login string) (string, string, error)
 	CheckUser(login string) (bool, error)
 	CheckOrder(login string, order int) (bool, bool, error)
-	NewOrder(login, status string, order int, accrual decimal.Decimal) error
+	NewOrder(login string, order int) error
 	GetOrders(login string) ([]byte, error)
 	GetBalance(login string) ([]byte, error)
 	GetWithdrawals(login string) ([]byte, error)
 	CheckPoints(order int, sum decimal.Decimal) (bool, error)
 	WithdrawPoints(order int, sum decimal.Decimal) error
+	UpdateAccrual(order int, status string, accrual decimal.Decimal) error
 }
 
 type Actions interface {

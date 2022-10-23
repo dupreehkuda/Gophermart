@@ -22,15 +22,12 @@ func (a actions) NewOrder(login string, order int) error {
 		return orderError.OrderUploadedError
 	}
 
-	status, accrual, err := a.getAccrualData(order)
+	err = a.storage.NewOrder(login, order)
 	if err != nil {
 		return err
 	}
 
-	err = a.storage.NewOrder(login, status, order, accrual)
-	if err != nil {
-		return err
-	}
+	a.service.Channel <- order
 
 	return nil
 }

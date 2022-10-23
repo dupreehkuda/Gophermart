@@ -15,6 +15,7 @@ func (h handlers) GetBalance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(response)
 	if err != nil {
 		h.logger.Error("Error occurred writing response", zap.Error(err))

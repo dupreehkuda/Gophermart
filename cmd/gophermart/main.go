@@ -16,9 +16,9 @@ func main() {
 	cfg := configuration.New(log)
 	store := storage.New(cfg.DatabasePath, log)
 	act := actions.New(store, log, cfg.AccrualAddress)
-	service := handlers.New(store, act, log)
+	handle := handlers.New(store, act, log)
 	mware := middleware.New(act, log)
 
-	api := server.New(service, mware, log)
+	api := server.New(handle, mware, log)
 	api.Launch(cfg.Address)
 }
