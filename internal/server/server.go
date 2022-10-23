@@ -19,7 +19,7 @@ func New(handlers intf.Handlers, middleware intf.Middleware, logger *zap.Logger)
 	return &server{handlers: handlers, mw: middleware, logger: logger}
 }
 
-func (s server) Launch(address string) {
+func (s server) Run(address string) {
 	r := chi.NewRouter()
 
 	r.Use(s.mw.CheckCompression)
@@ -50,8 +50,10 @@ func (s server) Launch(address string) {
 	})
 
 	s.logger.Info("Server started", zap.String("port", address))
-	err := http.ListenAndServe(address, r)
-	if err != nil {
-		s.logger.Error("Cant start server", zap.Error(err))
-	}
+	go func() {
+		err := http.ListenAndServe(address, r)
+		if err != nil {
+			s.logger.Error("Cant start server", zap.Error(err))
+		}
+	}()
 }

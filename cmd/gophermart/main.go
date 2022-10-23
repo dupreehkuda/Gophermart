@@ -20,5 +20,5 @@ func main() {
 	mware := middleware.New(act, log)
 
 	api := server.New(handle, mware, log)
-	api.Launch(cfg.Address)
+	api.Run(cfg.Address)
 }
