@@ -35,7 +35,7 @@ func (s storage) CheckPoints(login string, sum decimal.Decimal) (bool, error) {
 	return true, nil
 }
 
-func (s storage) WithdrawPoints(order int, sum decimal.Decimal) error {
+func (s storage) WithdrawPoints(login string, order int, sum decimal.Decimal) error {
 	conn, err := s.pool.Acquire(context.Background())
 	if err != nil {
 		s.logger.Error("Error while acquiring connection", zap.Error(err))
@@ -47,7 +47,7 @@ func (s storage) WithdrawPoints(order int, sum decimal.Decimal) error {
 
 	batch := &pgx.Batch{}
 
-	batch.Queue("update accrual set points = points - $1, withdrawn = withdrawn + $1 where login = (select login from orders where orderid = $2);", sum, order)
+	batch.Queue("update accrual set points = points - $1, withdrawn = withdrawn + $1 where login = $2;", sum, login)
 	batch.Queue("update orders set pointsspent = true where orderid = $1", order)
 
 	br := conn.SendBatch(context.Background(), batch)

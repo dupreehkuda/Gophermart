@@ -31,7 +31,7 @@ func (a actions) WithdrawPoints(login, order string, sum decimal.Decimal) error 
 		return balanceError.BalanceNotEnoughPointsError
 	}
 
-	err = a.storage.WithdrawPoints(orderConv, sum)
+	err = a.storage.WithdrawPoints(login, orderConv, sum)
 	if err != nil {
 		a.logger.Error("Error occurred when withdrawing points", zap.Error(err))
 		return err

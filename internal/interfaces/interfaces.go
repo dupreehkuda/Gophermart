@@ -26,7 +26,7 @@ type Stored interface {
 	GetBalance(login string) ([]byte, error)
 	GetWithdrawals(login string) ([]byte, error)
 	CheckPoints(login string, sum decimal.Decimal) (bool, error)
-	WithdrawPoints(order int, sum decimal.Decimal) error
+	WithdrawPoints(login string, order int, sum decimal.Decimal) error
 	UpdateAccrual(order int, status string, accrual decimal.Decimal) error
 }
 
