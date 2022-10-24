@@ -16,6 +16,7 @@ type withdrawData struct {
 }
 
 func (h handlers) WithdrawPoints(w http.ResponseWriter, r *http.Request) {
+	login := r.Context().Value("login").(string)
 	var data withdrawData
 
 	decoder := json.NewDecoder(r.Body)
@@ -31,7 +32,7 @@ func (h handlers) WithdrawPoints(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.actions.WithdrawPoints(data.Order, data.Sum)
+	err = h.actions.WithdrawPoints(login, data.Order, data.Sum)
 
 	switch err {
 	case balanceError.BalanceNotEnoughPointsError:

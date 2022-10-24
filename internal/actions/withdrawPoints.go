@@ -8,7 +8,7 @@ import (
 	balanceError "github.com/dupreehkuda/Gophermart/internal"
 )
 
-func (a actions) WithdrawPoints(order string, sum decimal.Decimal) error {
+func (a actions) WithdrawPoints(login, order string, sum decimal.Decimal) error {
 	orderConv, err := strconv.Atoi(order)
 	if err != nil {
 		a.logger.Error("Error occurred converting string order to int", zap.Error(err))
@@ -21,7 +21,7 @@ func (a actions) WithdrawPoints(order string, sum decimal.Decimal) error {
 		return balanceError.BalanceInvalidOrderError
 	}
 
-	balanceOk, err := a.storage.CheckPoints(orderConv, sum)
+	balanceOk, err := a.storage.CheckPoints(login, sum)
 	if err != nil {
 		a.logger.Error("Error occurred when checking balance", zap.Error(err))
 		return err

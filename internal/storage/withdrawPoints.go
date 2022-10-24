@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s storage) CheckPoints(order int, sum decimal.Decimal) (bool, error) {
+func (s storage) CheckPoints(login string, sum decimal.Decimal) (bool, error) {
 	var currentPoints decimal.Decimal
 
 	conn, err := s.pool.Acquire(context.Background())
@@ -21,7 +21,7 @@ func (s storage) CheckPoints(order int, sum decimal.Decimal) (bool, error) {
 
 	pgxdecimal.Register(conn.Conn().TypeMap())
 
-	err = conn.QueryRow(context.Background(), "select points from accrual where login = (select login from orders where orderid = $1);", order).Scan(&currentPoints)
+	err = conn.QueryRow(context.Background(), "select points from accrual where login = $1;", login).Scan(&currentPoints)
 	if err != nil {
 		s.logger.Debug("scan error", zap.Error(err))
 	}

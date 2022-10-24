@@ -25,7 +25,7 @@ type Stored interface {
 	GetOrders(login string) ([]byte, error)
 	GetBalance(login string) ([]byte, error)
 	GetWithdrawals(login string) ([]byte, error)
-	CheckPoints(order int, sum decimal.Decimal) (bool, error)
+	CheckPoints(login string, sum decimal.Decimal) (bool, error)
 	WithdrawPoints(order int, sum decimal.Decimal) error
 	UpdateAccrual(order int, status string, accrual decimal.Decimal) error
 }
@@ -37,7 +37,7 @@ type Actions interface {
 	GetOrders(login string) ([]byte, error)
 	GetBalance(login string) ([]byte, error)
 	GetWithdrawals(login string) ([]byte, error)
-	WithdrawPoints(order string, sum decimal.Decimal) error
+	WithdrawPoints(login, order string, sum decimal.Decimal) error
 }
 
 type Middleware interface {
