@@ -33,5 +33,7 @@ func (s storage) UpdateAccrual(order int, status string, accrual decimal.Decimal
 		}
 	}(br)
 
+	s.logger.Debug("updating accrual", zap.String("status", status), zap.Float64("accrual", accrual.InexactFloat64()))
+
 	return nil
 }
