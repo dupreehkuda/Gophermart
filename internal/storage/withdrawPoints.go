@@ -10,7 +10,7 @@ import (
 )
 
 func (s storage) CheckPoints(order int, sum decimal.Decimal) (bool, error) {
-	var currentPoints float64
+	var currentPoints decimal.Decimal
 
 	conn, err := s.pool.Acquire(context.Background())
 	if err != nil {
@@ -21,11 +21,14 @@ func (s storage) CheckPoints(order int, sum decimal.Decimal) (bool, error) {
 
 	pgxdecimal.Register(conn.Conn().TypeMap())
 
-	conn.QueryRow(context.Background(), "select points from accrual where login = (select login from orders where orderid = $1);", order).Scan(&currentPoints)
+	err := conn.QueryRow(context.Background(), "select points from accrual where login = (select login from orders where orderid = $1);", order).Scan(&currentPoints)
+	if err != nil {
+		s.logger.Debug("scan error", zap.Error(err))
+	}
 
-	s.logger.Debug("Amounts in database", zap.Float64("current", currentPoints), zap.Float64("want to get", sum.InexactFloat64()))
+	s.logger.Debug("Amounts in database", zap.Float64("current", currentPoints.InexactFloat64()), zap.Float64("want to get", sum.InexactFloat64()))
 
-	if currentPoints < sum.InexactFloat64() {
+	if currentPoints.LessThan(sum) {
 		return false, nil
 	}
 
