@@ -26,8 +26,6 @@ func (s storage) CheckPoints(login string, sum decimal.Decimal) (bool, error) {
 		s.logger.Debug("scan error", zap.Error(err))
 	}
 
-	s.logger.Debug("Amounts in database", zap.Float64("current", currentPoints.InexactFloat64()), zap.Float64("want to get", sum.InexactFloat64()))
-
 	if currentPoints.LessThan(sum) {
 		return false, nil
 	}
@@ -48,7 +46,7 @@ func (s storage) WithdrawPoints(login string, order int, sum decimal.Decimal) er
 	batch := &pgx.Batch{}
 
 	batch.Queue("update accrual set points = points - $1, withdrawn = withdrawn + $1 where login = $2;", sum, login)
-	batch.Queue("update orders set pointsspent = true where orderid = $1", order)
+	batch.Queue("update orders set pointsspent = true where orderid = $1;", order)
 
 	br := conn.SendBatch(context.Background(), batch)
 	defer func(br pgx.BatchResults) {

@@ -37,7 +37,5 @@ func (s storage) GetBalance(login string) ([]byte, error) {
 		return nil, err
 	}
 
-	s.logger.Debug("new balance", zap.Float64("current", resp.Current), zap.Float64("withdrawn", resp.Withdrawn))
-
 	return resultJSON, nil
 }
