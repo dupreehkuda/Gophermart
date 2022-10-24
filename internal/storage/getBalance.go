@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"encoding/json"
+	"math"
 
 	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
 	"go.uber.org/zap"
@@ -26,8 +27,8 @@ func (s storage) GetBalance(login string) ([]byte, error) {
 	fCurrent, _ := dbResp.Current.Float64()
 	fWithdrawn, _ := dbResp.Withdrawn.Float64()
 	resp = respBalance{
-		Current:   float32(fCurrent),
-		Withdrawn: float32(fWithdrawn),
+		Current:   math.Round(fCurrent*100) / 100,
+		Withdrawn: math.Round(fWithdrawn*100) / 100,
 	}
 
 	resultJSON, err := json.Marshal(resp)

@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"encoding/json"
+	"math"
 	"time"
 
 	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
@@ -44,7 +45,7 @@ func (s storage) GetOrders(login string) ([]byte, error) {
 		data = append(data, order{
 			Number:     val.Number,
 			Status:     val.Status,
-			Accrual:    float32(f),
+			Accrual:    math.Round(f*100) / 100,
 			UploadedAt: val.UploadedAt.Time.Format(time.RFC3339),
 		})
 	}

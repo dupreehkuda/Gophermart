@@ -3,9 +3,11 @@ package storage
 import (
 	"context"
 	"encoding/json"
+	"math"
 	"time"
 
 	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
+
 	"go.uber.org/zap"
 )
 
@@ -43,7 +45,7 @@ func (s storage) GetWithdrawals(login string) ([]byte, error) {
 		f, _ := val.Sum.Float64()
 		resp = append(resp, withdrawal{
 			Order:       val.Order,
-			Sum:         float32(f),
+			Sum:         math.Round(f*100) / 100,
 			ProcessedAt: val.ProcessedAt.Time.Format(time.RFC3339),
 		})
 	}

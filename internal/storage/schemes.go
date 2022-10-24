@@ -15,7 +15,7 @@ type dbOrder struct {
 type order struct {
 	Number     string  `json:"number"`
 	Status     string  `json:"status"`
-	Accrual    float32 `json:"accrual,omitempty"`
+	Accrual    float64 `json:"accrual,omitempty"`
 	UploadedAt string  `json:"uploaded_at"`
 }
 
@@ -27,7 +27,7 @@ type dbWithdrawal struct {
 
 type withdrawal struct {
 	Order       string  `json:"order"`
-	Sum         float32 `json:"sum"`
+	Sum         float64 `json:"sum"`
 	ProcessedAt string  `json:"processed_at"`
 }
 
@@ -37,6 +37,6 @@ type dbRespBalance struct {
 }
 
 type respBalance struct {
-	Current   float32
-	Withdrawn float32
+	Current   float64
+	Withdrawn float64
 }

@@ -23,6 +23,8 @@ func (s storage) CheckPoints(order int, sum decimal.Decimal) (bool, error) {
 
 	conn.QueryRow(context.Background(), "select points from accrual where login = (select login from orders where orderid = $1);", order).Scan(&currentPoints)
 
+	s.logger.Debug("Amounts in database", zap.Float64("current", currentPoints.InexactFloat64()), zap.Float64("want to get", sum.InexactFloat64()))
+
 	if currentPoints.LessThan(sum) {
 		return false, nil
 	}
