@@ -21,7 +21,7 @@ func (s storage) CheckPoints(order int, sum decimal.Decimal) (bool, error) {
 
 	pgxdecimal.Register(conn.Conn().TypeMap())
 
-	err := conn.QueryRow(context.Background(), "select points from accrual where login = (select login from orders where orderid = $1);", order).Scan(&currentPoints)
+	err = conn.QueryRow(context.Background(), "select points from accrual where login = (select login from orders where orderid = $1);", order).Scan(&currentPoints)
 	if err != nil {
 		s.logger.Debug("scan error", zap.Error(err))
 	}
