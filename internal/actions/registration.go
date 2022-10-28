@@ -7,60 +7,59 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/dupreehkuda/Gophermart/internal"
+	i "github.com/dupreehkuda/Gophermart/internal"
 )
 
-func (a actions) Register(login, password string) (string, bool, error) {
-	passwordSalt, err := internal.RandSymbols(10)
+func (a actions) Register(login, password string) error {
+	passwordSalt, err := i.RandSymbols(10)
 	if err != nil {
 		a.logger.Error("Generating salt error", zap.Error(err))
-		return "", false, err
+		return err
 	}
 
 	passwordHash := mdHash(password, passwordSalt)
 
-	exists, err := a.storage.CheckUser(login)
+	exists, err := a.storage.CheckDuplicateUser(login)
 	if err != nil {
 		a.logger.Error("User check db error", zap.Error(err))
-		return "", false, err
+		return err
 	}
 
 	if exists {
-		return "", true, nil
+		return i.CredentialsInUseError
 	}
 
 	err = a.storage.CreateUser(login, passwordHash, passwordSalt)
 	if err != nil {
 		a.logger.Error("User creation db error", zap.Error(err))
-		return "", false, err
+		return err
 	}
 
-	return passwordSalt, false, nil
+	return nil
 }
 
-func (a actions) Login(login, password string) (string, bool, error) {
-	exists, err := a.storage.CheckUser(login)
+func (a actions) Login(login, password string) error {
+	exists, err := a.storage.CheckDuplicateUser(login)
 	if err != nil {
 		a.logger.Error("User check db error", zap.Error(err))
-		return "", false, err
+		return err
 	}
 
 	if !exists {
-		a.logger.Error("User do not exist", zap.Error(err))
-		return "", false, nil
+		return i.WrongCredentials
 	}
 
 	passwordHash, passwordSalt, err := a.storage.LoginUser(login)
 	if err != nil {
-		return "", false, err
+		return err
 	}
 
 	checkHash := mdHash(password, passwordSalt)
 	if checkHash != passwordHash {
-		return "", false, nil
+		return nil
 	}
 
-	return passwordSalt, true, nil
+	return nil
 }
 
 func mdHash(password, passwordSalt string) string {

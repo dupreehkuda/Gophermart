@@ -2,7 +2,6 @@ package storage
 
 import (
 	"context"
-
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
@@ -14,7 +13,12 @@ type storage struct {
 }
 
 func New(path string, logger *zap.Logger) *storage {
-	conn, err := pgxpool.Connect(context.Background(), path)
+	config, err := pgxpool.ParseConfig(path)
+	if err != nil {
+		logger.Error("Unable to parse config", zap.Error(err))
+	}
+
+	conn, err := pgxpool.NewWithConfig(context.Background(), config)
 	if err != nil {
 		logger.Error("Unable to connect to database", zap.Error(err))
 	}
@@ -61,5 +65,13 @@ create table if not exists accrual
 	return &storage{
 		pool:   conn,
 		logger: logger,
+	}
+}
+
+func (s storage) batchClosing(br pgx.BatchResults) {
+	err := br.Close()
+	if err != nil {
+		s.logger.Error("Error while closing batch", zap.Error(err))
+		return
 	}
 }

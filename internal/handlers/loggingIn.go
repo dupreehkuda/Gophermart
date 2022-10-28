@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"go.uber.org/zap"
 
-	"github.com/dupreehkuda/Gophermart/internal"
+	i "github.com/dupreehkuda/Gophermart/internal"
 )
 
 func (h handlers) Login(w http.ResponseWriter, r *http.Request) {
@@ -26,20 +27,20 @@ func (h handlers) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, logged, err := h.actions.Login(logCredit.Login, logCredit.Password)
+	err = h.actions.Login(logCredit.Login, logCredit.Password)
 	if err != nil {
 		h.logger.Error("Unable to authorize", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if !logged {
+	if errors.Is(err, i.WrongCredentials) {
 		h.logger.Error("Login or password is wrong", zap.Error(err))
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	token, err := internal.GenerateJWT(logCredit.Login)
+	token, err := i.GenerateJWT(logCredit.Login)
 	if err != nil {
 		h.logger.Error("Error while generating jwt", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)

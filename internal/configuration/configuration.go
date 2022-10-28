@@ -8,14 +8,14 @@ import (
 	"go.uber.org/zap"
 )
 
-type config struct {
+type Config struct {
 	Address        string `env:"RUN_ADDRESS" envDefault:":8080"`
 	DatabasePath   string `env:"DATABASE_URI"`
 	AccrualAddress string `env:"ACCRUAL_SYSTEM_ADDRESS"`
 }
 
-func New(logger *zap.Logger) *config {
-	var config = config{}
+func New(logger *zap.Logger) *Config {
+	var config = Config{}
 	var err = env.Parse(&config)
 	if err != nil {
 		logger.Error("Error occurred when parsing config", zap.Error(err))

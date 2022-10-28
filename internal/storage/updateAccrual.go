@@ -25,13 +25,7 @@ func (s storage) UpdateAccrual(order int, status string, accrual decimal.Decimal
 	batch.Queue("update accrual set points = points + $1 where login = (select login from orders where orderid = $2);", accrual, order)
 
 	br := conn.SendBatch(context.Background(), batch)
-	defer func(br pgx.BatchResults) {
-		err := br.Close()
-		if err != nil {
-			s.logger.Error("Error while updating accrual", zap.Error(err))
-			return
-		}
-	}(br)
+	defer s.batchClosing(br)
 
 	return nil
 }

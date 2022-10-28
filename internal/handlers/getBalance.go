@@ -4,10 +4,13 @@ import (
 	"net/http"
 
 	"go.uber.org/zap"
+
+	i "github.com/dupreehkuda/Gophermart/internal"
 )
 
 func (h handlers) GetBalance(w http.ResponseWriter, r *http.Request) {
-	login := r.Context().Value("login").(string)
+	var ctxKey i.LoginKey = "login"
+	login := r.Context().Value(ctxKey).(string)
 
 	response, err := h.actions.GetBalance(login)
 	if err != nil {

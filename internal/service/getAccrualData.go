@@ -19,7 +19,7 @@ type accrualData struct {
 
 func (s *Service) updateOrderData() {
 	for s.active {
-		order := <-s.Channel
+		order := <-s.OrderQueue
 		var requestURL = s.addr + "/api/orders/" + strconv.Itoa(order)
 
 		resp, err := http.Get(requestURL)
@@ -32,7 +32,7 @@ func (s *Service) updateOrderData() {
 		case http.StatusTooManyRequests:
 			s.logger.Info("A lot of requests", zap.Any("headers", resp.Request))
 			time.Sleep(time.Second * 2)
-			s.Channel <- order
+			s.OrderQueue <- order
 
 		case http.StatusInternalServerError:
 			s.logger.Error("Code 500 when getting accrual")

@@ -16,5 +16,9 @@ type actions struct {
 
 func New(storage i.Stored, logger *zap.Logger, sysAddr string) *actions {
 	serv := s.New(storage, logger, sysAddr)
-	return &actions{service: serv, storage: storage, logger: logger, sysAddr: sysAddr}
+	return &actions{service: serv,
+		storage: storage,
+		logger:  logger,
+		sysAddr: sysAddr,
+	}
 }

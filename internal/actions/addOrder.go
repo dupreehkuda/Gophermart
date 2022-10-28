@@ -4,16 +4,13 @@ import (
 	orderError "github.com/dupreehkuda/Gophermart/internal"
 )
 
-func (a actions) NewOrder(login string, order int) error {
-	valid := luhnValid(order)
+func (a actions) NewOrder(login string, orderID int) error {
+	valid := luhnValid(orderID)
 	if !valid {
 		return orderError.OrderInvalidNumError
 	}
 
-	exists, usersOrder, err := a.storage.CheckOrder(login, order)
-	if err != nil {
-		return err
-	}
+	exists, usersOrder := a.storage.CheckOrderExistence(login, orderID)
 
 	if exists {
 		if !usersOrder {
@@ -22,12 +19,12 @@ func (a actions) NewOrder(login string, order int) error {
 		return orderError.OrderUploadedError
 	}
 
-	err = a.storage.NewOrder(login, order)
+	err := a.storage.NewOrder(login, orderID)
 	if err != nil {
 		return err
 	}
 
-	a.service.Channel <- order
+	a.service.OrderQueue <- orderID
 
 	return nil
 }

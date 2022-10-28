@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	i "github.com/dupreehkuda/Gophermart/internal/interfaces"
-
 	"go.uber.org/zap"
+
+	i "github.com/dupreehkuda/Gophermart/internal/interfaces"
 )
 
 type handlers struct {
@@ -13,5 +13,9 @@ type handlers struct {
 }
 
 func New(storage i.Stored, processor i.Actions, logger *zap.Logger) *handlers {
-	return &handlers{storage: storage, actions: processor, logger: logger}
+	return &handlers{
+		storage: storage,
+		actions: processor,
+		logger:  logger,
+	}
 }

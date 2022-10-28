@@ -25,13 +25,7 @@ func (s storage) CreateUser(login string, passwordHash string, passwordSalt stri
 	batch.Queue("INSERT INTO accrual(login, points, withdrawn) VALUES ($1, $2, $3);", login, decimal.Zero, decimal.Zero)
 
 	br := conn.SendBatch(context.Background(), batch)
-	defer func(br pgx.BatchResults) {
-		err := br.Close()
-		if err != nil {
-			s.logger.Error("Error while inserting", zap.Error(err))
-			return
-		}
-	}(br)
+	defer s.batchClosing(br)
 
 	return nil
 }
@@ -57,7 +51,7 @@ func (s storage) LoginUser(login string) (string, string, error) {
 	return passwordHash, passwordSalt, nil
 }
 
-func (s storage) CheckUser(login string) (bool, error) {
+func (s storage) CheckDuplicateUser(login string) (bool, error) {
 	var dbLogin string
 
 	conn, err := s.pool.Acquire(context.Background())

@@ -6,9 +6,10 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/golang-jwt/jwt"
 	"go.uber.org/zap"
 
-	"github.com/golang-jwt/jwt"
+	i "github.com/dupreehkuda/Gophermart/internal"
 )
 
 func (m middleware) CheckToken(next http.Handler) http.Handler {
@@ -50,8 +51,9 @@ func (m middleware) CheckToken(next http.Handler) http.Handler {
 			}
 
 			if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+				var ctxKey i.LoginKey = "login"
 				login := claims["user"].(string)
-				ctx := context.WithValue(r.Context(), "login", login)
+				ctx := context.WithValue(r.Context(), ctxKey, login)
 				next.ServeHTTP(w, r.WithContext(ctx))
 				return
 			}

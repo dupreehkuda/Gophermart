@@ -6,13 +6,14 @@ import (
 	"net/http"
 	"strconv"
 
-	orderError "github.com/dupreehkuda/Gophermart/internal"
+	i "github.com/dupreehkuda/Gophermart/internal"
 
 	"go.uber.org/zap"
 )
 
 func (h handlers) AddOrder(w http.ResponseWriter, r *http.Request) {
-	login := r.Context().Value("login").(string)
+	var ctxKey i.LoginKey = "login"
+	login := r.Context().Value(ctxKey).(string)
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil || len(body) == 0 {
@@ -35,13 +36,13 @@ func (h handlers) AddOrder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	switch {
-	case errors.Is(err, orderError.OrderInvalidNumError):
+	case errors.Is(err, i.OrderInvalidNumError):
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
-	case errors.Is(err, orderError.OrderOccupiedError):
+	case errors.Is(err, i.OrderOccupiedError):
 		w.WriteHeader(http.StatusConflict)
 		return
-	case errors.Is(err, orderError.OrderUploadedError):
+	case errors.Is(err, i.OrderUploadedError):
 		w.WriteHeader(http.StatusOK)
 		return
 	default:

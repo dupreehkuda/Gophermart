@@ -19,25 +19,25 @@ type Handlers interface {
 type Stored interface {
 	CreateUser(login, passwordHash, passwordSalt string) error
 	LoginUser(login string) (string, string, error)
-	CheckUser(login string) (bool, error)
-	CheckOrder(login string, order int) (bool, bool, error)
-	NewOrder(login string, order int) error
+	CheckDuplicateUser(login string) (bool, error)
+	CheckOrderExistence(login string, orderID int) (bool, bool)
+	NewOrder(login string, orderID int) error
 	GetOrders(login string) ([]byte, error)
 	GetBalance(login string) ([]byte, error)
 	GetWithdrawals(login string) ([]byte, error)
-	CheckPoints(login string, sum decimal.Decimal) (bool, error)
-	WithdrawPoints(login string, order int, sum decimal.Decimal) error
-	UpdateAccrual(order int, status string, accrual decimal.Decimal) error
+	CheckPoints(login string, sum decimal.Decimal) error
+	WithdrawPoints(login string, orderID int, sum decimal.Decimal) error
+	UpdateAccrual(orderID int, status string, accrual decimal.Decimal) error
 }
 
 type Actions interface {
-	Register(login, password string) (string, bool, error)
-	Login(login, password string) (string, bool, error)
-	NewOrder(login string, order int) error
+	Register(login, password string) error
+	Login(login, password string) error
+	NewOrder(login string, orderID int) error
 	GetOrders(login string) ([]byte, error)
 	GetBalance(login string) ([]byte, error)
 	GetWithdrawals(login string) ([]byte, error)
-	WithdrawPoints(login, order string, sum decimal.Decimal) error
+	WithdrawPoints(login, orderID string, sum decimal.Decimal) error
 }
 
 type Middleware interface {

@@ -7,21 +7,21 @@ import (
 )
 
 type Service struct {
-	storage intf.Stored
-	addr    string
-	logger  *zap.Logger
-	Channel chan int
-	active  bool
+	storage    intf.Stored
+	addr       string
+	logger     *zap.Logger
+	OrderQueue chan int
+	active     bool
 }
 
 func New(storage intf.Stored, logger *zap.Logger, addr string) *Service {
 	ch := make(chan int, 10)
 	serv := &Service{
-		storage: storage,
-		addr:    addr,
-		logger:  logger,
-		Channel: ch,
-		active:  true,
+		storage:    storage,
+		addr:       addr,
+		logger:     logger,
+		OrderQueue: ch,
+		active:     true,
 	}
 
 	if addr != "" {
