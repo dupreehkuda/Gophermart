@@ -25,14 +25,12 @@ func (s storage) GetWithdrawals(login string) ([]byte, error) {
 
 	pgxdecimal.Register(conn.Conn().TypeMap())
 
-	rows, err := conn.Query(context.Background(), "select orderid, accrual, orderdate from orders where pointsspent = $1 order by orderdate;", true)
+	rows, err := conn.Query(context.Background(), "select orderid, accrual, orderdate from orders where pointsspent = $1 and login = $2 order by orderdate;", true, login)
 	if err != nil {
 		s.logger.Error("Error while getting withdrawals", zap.Error(err))
 		return nil, err
 	}
 	defer rows.Close()
-
-	s.logger.Debug("after connection", zap.Any("rows", rows))
 
 	for rows.Next() {
 		var r dbWithdrawal
@@ -41,7 +39,6 @@ func (s storage) GetWithdrawals(login string) ([]byte, error) {
 			s.logger.Error("Error while scanning rows", zap.Error(err))
 			return nil, err
 		}
-		s.logger.Debug("if rows cycle", zap.Any("new item", r))
 		dbResp = append(dbResp, r)
 	}
 
@@ -52,7 +49,6 @@ func (s storage) GetWithdrawals(login string) ([]byte, error) {
 			Sum:         math.Round(f*100) / 100,
 			ProcessedAt: val.ProcessedAt.Time.Format(time.RFC3339),
 		})
-		s.logger.Debug("if redefine cycle", zap.Any("new item added", resp))
 	}
 
 	resultJSON, err := json.Marshal(resp)
