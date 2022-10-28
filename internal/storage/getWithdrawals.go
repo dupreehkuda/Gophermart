@@ -32,6 +32,8 @@ func (s storage) GetWithdrawals(login string) ([]byte, error) {
 	}
 	defer rows.Close()
 
+	s.logger.Debug("after connection", zap.Any("rows", rows))
+
 	for rows.Next() {
 		var r dbWithdrawal
 		err := rows.Scan(&r.Order, &r.Sum, &r.ProcessedAt)
@@ -39,6 +41,7 @@ func (s storage) GetWithdrawals(login string) ([]byte, error) {
 			s.logger.Error("Error while scanning rows", zap.Error(err))
 			return nil, err
 		}
+		s.logger.Debug("if rows cycle", zap.Any("new item", r))
 		dbResp = append(dbResp, r)
 	}
 
@@ -49,6 +52,7 @@ func (s storage) GetWithdrawals(login string) ([]byte, error) {
 			Sum:         math.Round(f*100) / 100,
 			ProcessedAt: val.ProcessedAt.Time.Format(time.RFC3339),
 		})
+		s.logger.Debug("if redefine cycle", zap.Any("new item added", resp))
 	}
 
 	resultJSON, err := json.Marshal(resp)
