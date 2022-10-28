@@ -49,7 +49,7 @@ func (s storage) WithdrawPoints(login string, order int, sum, current decimal.De
 
 	batch := &pgx.Batch{}
 
-	batch.Queue("update orders set pointsspent = true where orderid = $1;", order)
+	batch.Queue("update orders set pointsspent = $1 where orderid = $2;", true, order)
 	batch.Queue("update accrual set points = $1 where login = $2;", current.Sub(sum), login)
 	batch.Queue("update accrual set withdrawn = withdrawn + $1 where login = $2;", sum, login)
 

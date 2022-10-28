@@ -41,7 +41,7 @@ create table if not exists orders
         unique,
     login     text not null
         references users,
-    pointsspent bool,
+    pointsspent bool default FALSE,
     orderdate  timestamp,
     accrual    numeric,
     status     text
