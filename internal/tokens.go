@@ -8,6 +8,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+// GenerateJWT returns a JWT token
 func GenerateJWT(login string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)

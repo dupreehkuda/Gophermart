@@ -2,6 +2,7 @@ package actions
 
 import "go.uber.org/zap"
 
+// GetWithdrawals gets a list of user's withdrawals
 func (a actions) GetWithdrawals(login string) ([]byte, error) {
 	data, err := a.storage.GetWithdrawals(login)
 	if err != nil {

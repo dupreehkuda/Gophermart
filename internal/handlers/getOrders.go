@@ -8,6 +8,7 @@ import (
 	i "github.com/dupreehkuda/Gophermart/internal"
 )
 
+// GetOrders handles action of getting a list of user's completed orders
 func (h handlers) GetOrders(w http.ResponseWriter, r *http.Request) {
 	var ctxKey i.LoginKey = "login"
 	login := r.Context().Value(ctxKey).(string)

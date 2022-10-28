@@ -4,6 +4,7 @@ import (
 	orderError "github.com/dupreehkuda/Gophermart/internal"
 )
 
+// NewOrder is processing new orders in the system
 func (a actions) NewOrder(login string, orderID int) error {
 	valid := luhnValid(orderID)
 	if !valid {

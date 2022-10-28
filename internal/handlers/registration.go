@@ -15,6 +15,7 @@ type Credentials struct {
 	Password string `json:"password"`
 }
 
+// Register handles an action of creating new user
 func (h handlers) Register(w http.ResponseWriter, r *http.Request) {
 	var regCredit Credentials
 

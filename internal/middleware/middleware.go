@@ -11,6 +11,7 @@ type middleware struct {
 	logger    *zap.Logger
 }
 
+// New creates new instance of middleware
 func New(processor i.Actions, logger *zap.Logger) *middleware {
 	return &middleware{
 		processor: processor,

@@ -6,6 +6,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+// Handlers implement an interface for request handling
 type Handlers interface {
 	Register(w http.ResponseWriter, r *http.Request)
 	Login(w http.ResponseWriter, r *http.Request)
@@ -16,6 +17,7 @@ type Handlers interface {
 	GetWithdrawals(w http.ResponseWriter, r *http.Request)
 }
 
+// Stored implements an interface for database layer
 type Stored interface {
 	CreateUser(login, passwordHash, passwordSalt string) error
 	LoginUser(login string) (string, string, error)
@@ -25,11 +27,12 @@ type Stored interface {
 	GetOrders(login string) ([]byte, error)
 	GetBalance(login string) ([]byte, error)
 	GetWithdrawals(login string) ([]byte, error)
-	CheckPoints(login string, sum decimal.Decimal) error
-	WithdrawPoints(login string, orderID int, sum decimal.Decimal) error
+	CheckPoints(login string, sum decimal.Decimal) (decimal.Decimal, error)
+	WithdrawPoints(login string, orderID int, sum, current decimal.Decimal) error
 	UpdateAccrual(orderID int, status string, accrual decimal.Decimal) error
 }
 
+// Actions implement an interface for business logic layer
 type Actions interface {
 	Register(login, password string) error
 	Login(login, password string) error
@@ -40,6 +43,7 @@ type Actions interface {
 	WithdrawPoints(login, orderID string, sum decimal.Decimal) error
 }
 
+// Middleware implement an interface for middleware layer
 type Middleware interface {
 	CheckCompression(next http.Handler) http.Handler
 	WriteCompressed(next http.Handler) http.Handler

@@ -11,6 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// AddOrder handles action of processing new orders
 func (h handlers) AddOrder(w http.ResponseWriter, r *http.Request) {
 	var ctxKey i.LoginKey = "login"
 	login := r.Context().Value(ctxKey).(string)

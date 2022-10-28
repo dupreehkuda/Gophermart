@@ -27,6 +27,7 @@ type server struct {
 	config   *configuration.Config
 }
 
+// NewByConfig creates new server instance with underlying layers
 func NewByConfig() *server {
 	log := logger.InitializeLogger()
 
@@ -44,6 +45,7 @@ func NewByConfig() *server {
 	}
 }
 
+// Run runs the service
 func (s server) Run() {
 	serv := &http.Server{Addr: s.config.Address, Handler: s.service()}
 

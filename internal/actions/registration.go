@@ -10,6 +10,7 @@ import (
 	i "github.com/dupreehkuda/Gophermart/internal"
 )
 
+// Register processes user's registration interaction
 func (a actions) Register(login, password string) error {
 	passwordSalt, err := i.RandSymbols(10)
 	if err != nil {
@@ -38,6 +39,7 @@ func (a actions) Register(login, password string) error {
 	return nil
 }
 
+// Login processes user's login interaction
 func (a actions) Login(login, password string) error {
 	exists, err := a.storage.CheckDuplicateUser(login)
 	if err != nil {
@@ -62,6 +64,7 @@ func (a actions) Login(login, password string) error {
 	return nil
 }
 
+// mdHash hashes password with salt
 func mdHash(password, passwordSalt string) string {
 	hasher := md5.New()
 	io.WriteString(hasher, password+passwordSalt)

@@ -8,6 +8,7 @@ import (
 	i "github.com/dupreehkuda/Gophermart/internal"
 )
 
+// GetWithdrawals handles action of getting a list of user's withdrawals
 func (h handlers) GetWithdrawals(w http.ResponseWriter, r *http.Request) {
 	var ctxKey i.LoginKey = "login"
 	login := r.Context().Value(ctxKey).(string)

@@ -9,6 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// CreateUser inserts new user's data in the database
 func (s storage) CreateUser(login string, passwordHash string, passwordSalt string) error {
 	conn, err := s.pool.Acquire(context.Background())
 	if err != nil {
@@ -30,6 +31,7 @@ func (s storage) CreateUser(login string, passwordHash string, passwordSalt stri
 	return nil
 }
 
+// LoginUser gets user's data from the database to check for correct credentials
 func (s storage) LoginUser(login string) (string, string, error) {
 	var (
 		passwordHash string
@@ -51,6 +53,7 @@ func (s storage) LoginUser(login string) (string, string, error) {
 	return passwordHash, passwordSalt, nil
 }
 
+// CheckDuplicateUser checks if user is already existing
 func (s storage) CheckDuplicateUser(login string) (bool, error) {
 	var dbLogin string
 

@@ -14,6 +14,7 @@ type Config struct {
 	AccrualAddress string `env:"ACCRUAL_SYSTEM_ADDRESS"`
 }
 
+// New creates new Config
 func New(logger *zap.Logger) *Config {
 	var config = Config{}
 	var err = env.Parse(&config)

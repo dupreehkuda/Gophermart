@@ -8,6 +8,7 @@ import (
 	i "github.com/dupreehkuda/Gophermart/internal"
 )
 
+// GetBalance handles action of getting current balance
 func (h handlers) GetBalance(w http.ResponseWriter, r *http.Request) {
 	var ctxKey i.LoginKey = "login"
 	login := r.Context().Value(ctxKey).(string)

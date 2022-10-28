@@ -14,6 +14,7 @@ type actions struct {
 	sysAddr string
 }
 
+// New creates new instance of actions
 func New(storage i.Stored, logger *zap.Logger, sysAddr string) *actions {
 	serv := s.New(storage, logger, sysAddr)
 	return &actions{service: serv,

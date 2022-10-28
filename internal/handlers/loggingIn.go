@@ -10,6 +10,7 @@ import (
 	i "github.com/dupreehkuda/Gophermart/internal"
 )
 
+// Login handles an action of user logging in
 func (h handlers) Login(w http.ResponseWriter, r *http.Request) {
 	var logCredit Credentials
 

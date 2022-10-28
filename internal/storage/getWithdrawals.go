@@ -11,6 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// GetWithdrawals gets user's completed withdrawals from the database
 func (s storage) GetWithdrawals(login string) ([]byte, error) {
 	dbResp := []dbWithdrawal{}
 	resp := []withdrawal{}

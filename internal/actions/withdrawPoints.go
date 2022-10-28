@@ -10,6 +10,7 @@ import (
 	i "github.com/dupreehkuda/Gophermart/internal"
 )
 
+// WithdrawPoints withdraws points for users order
 func (a actions) WithdrawPoints(login, orderID string, sum decimal.Decimal) error {
 	orderConv, err := strconv.Atoi(orderID)
 	if err != nil {

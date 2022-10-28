@@ -12,6 +12,7 @@ type storage struct {
 	logger *zap.Logger
 }
 
+// New creates a new instance of database layer and migrates it
 func New(path string, logger *zap.Logger) *storage {
 	config, err := pgxpool.ParseConfig(path)
 	if err != nil {
@@ -68,6 +69,7 @@ create table if not exists accrual
 	}
 }
 
+// batchClosing closes the batch and checks for an error
 func (s storage) batchClosing(br pgx.BatchResults) {
 	err := br.Close()
 	if err != nil {

@@ -2,13 +2,14 @@ package storage
 
 import (
 	"context"
+
 	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
 	"github.com/jackc/pgx/v5"
-
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
 )
 
+// UpdateAccrual updates order data in the database
 func (s storage) UpdateAccrual(order int, status string, accrual decimal.Decimal) error {
 	conn, err := s.pool.Acquire(context.Background())
 	if err != nil {

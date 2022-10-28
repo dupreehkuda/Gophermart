@@ -9,6 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// CheckOrderExistence checks if order already exist in the database
 func (s storage) CheckOrderExistence(login string, orderID int) (bool, bool) {
 	var dbUserLogin string
 
@@ -32,6 +33,7 @@ func (s storage) CheckOrderExistence(login string, orderID int) (bool, bool) {
 	return true, true
 }
 
+// NewOrder creates inserts new order in the database
 func (s storage) NewOrder(login string, orderID int) error {
 	conn, err := s.pool.Acquire(context.Background())
 	if err != nil {

@@ -11,13 +11,14 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s storage) CheckPoints(login string, sum decimal.Decimal) error {
+// CheckPoints checks if user have enough points
+func (s storage) CheckPoints(login string, sum decimal.Decimal) (decimal.Decimal, error) {
 	var currentPoints decimal.Decimal
 
 	conn, err := s.pool.Acquire(context.Background())
 	if err != nil {
 		s.logger.Error("Error while acquiring connection", zap.Error(err))
-		return err
+		return currentPoints, err
 	}
 	defer conn.Release()
 
@@ -29,13 +30,14 @@ func (s storage) CheckPoints(login string, sum decimal.Decimal) error {
 	}
 
 	if currentPoints.LessThan(sum) {
-		return i.ErrBalanceNotEnoughPoints
+		return currentPoints, i.ErrBalanceNotEnoughPoints
 	}
 
-	return nil
+	return currentPoints, nil
 }
 
-func (s storage) WithdrawPoints(login string, order int, sum decimal.Decimal) error {
+// WithdrawPoints withdraws points from users account and sets order as paid
+func (s storage) WithdrawPoints(login string, order int, sum, current decimal.Decimal) error {
 	conn, err := s.pool.Acquire(context.Background())
 	if err != nil {
 		s.logger.Error("Error while acquiring connection", zap.Error(err))
@@ -47,8 +49,9 @@ func (s storage) WithdrawPoints(login string, order int, sum decimal.Decimal) er
 
 	batch := &pgx.Batch{}
 
-	batch.Queue("update accrual set points = points - $1, withdrawn = withdrawn + $1 where login = $2;", sum, login)
 	batch.Queue("update orders set pointsspent = true where orderid = $1;", order)
+	batch.Queue("update accrual set points = $1 where login = $2;", current.Sub(sum), login)
+	batch.Queue("update accrual set withdrawn = withdrawn + $1 where login = $2;", sum, login)
 
 	br := conn.SendBatch(context.Background(), batch)
 	defer s.batchClosing(br)

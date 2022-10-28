@@ -14,6 +14,7 @@ type Service struct {
 	active     bool
 }
 
+// New creates new instance of accrual call system
 func New(storage intf.Stored, logger *zap.Logger, addr string) *Service {
 	ch := make(chan int, 10)
 	serv := &Service{

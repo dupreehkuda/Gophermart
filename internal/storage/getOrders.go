@@ -10,6 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// GetOrders gets user's completed orders from the database
 func (s storage) GetOrders(login string) ([]byte, error) {
 	var dataFromDB []dbOrder
 	var data []order

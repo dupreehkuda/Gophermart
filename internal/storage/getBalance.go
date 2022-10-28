@@ -9,6 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// GetBalance gets user's current balance from the database
 func (s storage) GetBalance(login string) ([]byte, error) {
 	var resp respBalance
 	var dbResp dbRespBalance

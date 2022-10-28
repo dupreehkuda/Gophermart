@@ -15,6 +15,7 @@ type withdrawData struct {
 	Sum   decimal.Decimal `json:"sum"`
 }
 
+// WithdrawPoints handles an action of withdrawing user's points for purchase
 func (h handlers) WithdrawPoints(w http.ResponseWriter, r *http.Request) {
 	var ctxKey i.LoginKey = "login"
 	login := r.Context().Value(ctxKey).(string)

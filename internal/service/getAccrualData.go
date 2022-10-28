@@ -17,6 +17,7 @@ type accrualData struct {
 	Accrual float64 `json:"accrual"`
 }
 
+// updateOrderData is a job for calling accrual service for order info
 func (s *Service) updateOrderData() {
 	for s.active {
 		order := <-s.OrderQueue

@@ -12,6 +12,7 @@ import (
 	i "github.com/dupreehkuda/Gophermart/internal"
 )
 
+// CheckToken implements JWT token parsing and authorizing users
 func (m middleware) CheckToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token, err := r.Cookie("JWT")
