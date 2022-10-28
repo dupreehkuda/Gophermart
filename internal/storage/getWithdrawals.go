@@ -25,7 +25,7 @@ func (s storage) GetWithdrawals(login string) ([]byte, error) {
 
 	pgxdecimal.Register(conn.Conn().TypeMap())
 
-	rows, err := conn.Query(context.Background(), "select orderid, accrual, orderdate from orders where login = $1 and pointsspent = true order by orderdate;", login)
+	rows, err := conn.Query(context.Background(), "select orderid, accrual, orderdate from orders where pointsspent = true order by orderdate;")
 	if err != nil {
 		s.logger.Error("Error while getting withdrawals", zap.Error(err))
 		return nil, err
