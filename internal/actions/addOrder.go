@@ -7,16 +7,16 @@ import (
 func (a actions) NewOrder(login string, orderID int) error {
 	valid := luhnValid(orderID)
 	if !valid {
-		return orderError.OrderInvalidNumError
+		return orderError.ErrOrderInvalidNum
 	}
 
 	exists, usersOrder := a.storage.CheckOrderExistence(login, orderID)
 
 	if exists {
 		if !usersOrder {
-			return orderError.OrderOccupiedError
+			return orderError.ErrOrderOccupied
 		}
-		return orderError.OrderUploadedError
+		return orderError.ErrOrderUploaded
 	}
 
 	err := a.storage.NewOrder(login, orderID)

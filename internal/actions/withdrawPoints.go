@@ -20,13 +20,13 @@ func (a actions) WithdrawPoints(login, orderID string, sum decimal.Decimal) erro
 	valid := luhnValid(orderConv)
 	if !valid {
 		a.logger.Error("Order number is luhn invalid", zap.Error(err))
-		return i.BalanceInvalidOrderError
+		return i.ErrBalanceInvalidOrder
 	}
 
 	err = a.storage.CheckPoints(login, sum)
 
 	switch {
-	case errors.Is(err, i.BalanceNotEnoughPointsError):
+	case errors.Is(err, i.ErrBalanceNotEnoughPoints):
 		return err
 	case err != nil:
 		a.logger.Error("Error occurred when checking balance", zap.Error(err))

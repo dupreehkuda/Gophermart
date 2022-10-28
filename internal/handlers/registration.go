@@ -35,7 +35,7 @@ func (h handlers) Register(w http.ResponseWriter, r *http.Request) {
 	err = h.actions.Register(regCredit.Login, regCredit.Password)
 
 	switch {
-	case errors.Is(err, i.CredentialsInUseError):
+	case errors.Is(err, i.ErrCredentialsInUse):
 		h.logger.Info("Login occupied", zap.String("login", regCredit.Login))
 		w.WriteHeader(http.StatusConflict)
 		return

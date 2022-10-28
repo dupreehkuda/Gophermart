@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	OrderInvalidNumError = errors.New("invalid order number")
-	OrderOccupiedError   = errors.New("occupied order")
-	OrderUploadedError   = errors.New("already uploaded")
+	ErrOrderInvalidNum = errors.New("invalid order number")
+	ErrOrderOccupied   = errors.New("occupied order")
+	ErrOrderUploaded   = errors.New("already uploaded")
 )

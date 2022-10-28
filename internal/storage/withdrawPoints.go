@@ -29,7 +29,7 @@ func (s storage) CheckPoints(login string, sum decimal.Decimal) error {
 	}
 
 	if currentPoints.LessThan(sum) {
-		return i.BalanceNotEnoughPointsError
+		return i.ErrBalanceNotEnoughPoints
 	}
 
 	return nil

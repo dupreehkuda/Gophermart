@@ -26,7 +26,7 @@ func (a actions) Register(login, password string) error {
 	}
 
 	if exists {
-		return i.CredentialsInUseError
+		return i.ErrCredentialsInUse
 	}
 
 	err = a.storage.CreateUser(login, passwordHash, passwordSalt)
@@ -46,7 +46,7 @@ func (a actions) Login(login, password string) error {
 	}
 
 	if !exists {
-		return i.WrongCredentials
+		return i.ErrWrongCredentials
 	}
 
 	passwordHash, passwordSalt, err := a.storage.LoginUser(login)

@@ -34,7 +34,7 @@ func (h handlers) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if errors.Is(err, i.WrongCredentials) {
+	if errors.Is(err, i.ErrWrongCredentials) {
 		h.logger.Error("Login or password is wrong", zap.Error(err))
 		w.WriteHeader(http.StatusUnauthorized)
 		return

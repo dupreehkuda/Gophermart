@@ -37,10 +37,10 @@ func (h handlers) WithdrawPoints(w http.ResponseWriter, r *http.Request) {
 	err = h.actions.WithdrawPoints(login, data.Order, data.Sum)
 
 	switch err {
-	case i.BalanceNotEnoughPointsError:
+	case i.ErrBalanceNotEnoughPoints:
 		w.WriteHeader(http.StatusPaymentRequired)
 		return
-	case i.OrderInvalidNumError:
+	case i.ErrOrderInvalidNum:
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	case nil:

@@ -3,6 +3,6 @@ package internal
 import "errors"
 
 var (
-	CredentialsInUseError = errors.New("username already in use")
-	WrongCredentials      = errors.New("no such user or wrong password")
+	ErrCredentialsInUse = errors.New("username already in use")
+	ErrWrongCredentials = errors.New("no such user or wrong password")
 )
