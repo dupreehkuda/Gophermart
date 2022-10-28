@@ -24,7 +24,7 @@ func (a actions) WithdrawPoints(login, orderID string, sum decimal.Decimal) erro
 		return i.ErrBalanceInvalidOrder
 	}
 
-	err = a.storage.CheckPoints(login, sum)
+	current, err := a.storage.CheckPoints(login, sum)
 
 	switch {
 	case errors.Is(err, i.ErrBalanceNotEnoughPoints):
@@ -34,7 +34,7 @@ func (a actions) WithdrawPoints(login, orderID string, sum decimal.Decimal) erro
 		return err
 	}
 
-	err = a.storage.WithdrawPoints(login, orderConv, sum)
+	err = a.storage.WithdrawPoints(login, orderConv, sum, current)
 	if err != nil {
 		a.logger.Error("Error occurred when withdrawing points", zap.Error(err))
 		return err
