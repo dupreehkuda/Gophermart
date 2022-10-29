@@ -22,6 +22,4 @@ vendor/
 .idea
 .vscode
 
-#Dockerfile
-#docker-compose.yml
-#.env
+.DS_Store
