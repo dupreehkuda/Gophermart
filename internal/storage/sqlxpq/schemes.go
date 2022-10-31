@@ -1,4 +1,4 @@
-package storage
+package sqlxpq
 
 import (
 	"github.com/jackc/pgx/v5/pgtype"

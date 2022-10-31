@@ -17,7 +17,7 @@ import (
 	intf "github.com/dupreehkuda/Gophermart/internal/interfaces"
 	"github.com/dupreehkuda/Gophermart/internal/logger"
 	"github.com/dupreehkuda/Gophermart/internal/middleware"
-	"github.com/dupreehkuda/Gophermart/internal/storage"
+	"github.com/dupreehkuda/Gophermart/internal/storage/sqlxpq"
 )
 
 type server struct {
@@ -32,7 +32,7 @@ func NewByConfig() *server {
 	log := logger.InitializeLogger()
 
 	cfg := configuration.New(log)
-	store := storage.New(cfg.DatabasePath, log)
+	store := sqlxpq.New(cfg.DatabasePath, log)
 	act := actions.New(store, log, cfg.AccrualAddress)
 	handle := handlers.New(store, act, log)
 	mware := middleware.New(act, log)

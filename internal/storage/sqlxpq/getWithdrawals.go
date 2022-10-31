@@ -1,31 +1,18 @@
-package storage
+package sqlxpq
 
 import (
-	"context"
 	"encoding/json"
+	"go.uber.org/zap"
 	"math"
 	"time"
-
-	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
-
-	"go.uber.org/zap"
 )
 
 // GetWithdrawals gets user's completed withdrawals from the database
-func (s storage) GetWithdrawals(login string) ([]byte, error) {
+func (s storageLpq) GetWithdrawals(login string) ([]byte, error) {
 	dbResp := []dbWithdrawal{}
 	resp := []withdrawal{}
 
-	conn, err := s.pool.Acquire(context.Background())
-	if err != nil {
-		s.logger.Error("Error while acquiring connection", zap.Error(err))
-		return nil, err
-	}
-	defer conn.Release()
-
-	pgxdecimal.Register(conn.Conn().TypeMap())
-
-	rows, err := conn.Query(context.Background(), "select orderid, accrual, orderdate from orders where pointsspent = $1 and login = $2 order by orderdate;", true, login)
+	rows, err := s.conn.Query("select orderid, accrual, orderdate from orders where pointsspent = $1 and login = $2 order by orderdate;", true, login)
 	if err != nil {
 		s.logger.Error("Error while getting withdrawals", zap.Error(err))
 		return nil, err
