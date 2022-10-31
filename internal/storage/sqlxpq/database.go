@@ -19,7 +19,7 @@ create table if not exists users (
 );
 
 create table if not exists orders (
-    orderid    bigint not null unique,
+    orderid    bigint not null primary key unique,
     login     text not null references users,
     pointsspent bool default FALSE,
     orderdate  timestamp,
@@ -30,7 +30,14 @@ create table if not exists orders (
 create table if not exists accrual (
     login text not null primary key references users,
     points numeric not null,
-    withdrawn numeric
+    withdrawn numeric not null
+);
+
+create table if not exists withdrawals (
+    orderid bigint not null unique references orders,
+    login text not null, 
+    withdrawn numeric not null,
+    processed_at timestamp
 );
 `
 
@@ -43,13 +50,10 @@ func New(path string, logger *zap.Logger) *storageLpq {
 
 	db.MustExec(schema)
 
+	logger.Info("Launched with sqlx")
+
 	return &storageLpq{
 		conn:   db,
 		logger: logger,
 	}
 }
-
-//// batchClosing closes the batch and checks for an error
-//func (s storageLpq) batchClosing(br pgx.BatchResults) {
-//
-//}

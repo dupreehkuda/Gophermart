@@ -3,6 +3,7 @@ package sqlxpq
 import (
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
+	"time"
 
 	i "github.com/dupreehkuda/Gophermart/internal"
 )
@@ -29,6 +30,7 @@ func (s storageLpq) WithdrawPoints(login string, order int, sum, current decimal
 
 	tx.MustExec("update orders set pointsspent = $1 where orderid = $2;", true, order)
 	tx.MustExec("update accrual set points = points - $1, withdrawn = withdrawn + $1 where login = $2;", sum, login)
+	tx.MustExec("insert into withdrawals(orderid, login, withdrawn, processed_at) values ($1, $2, $3, $4);", order, login, sum, time.Now().Format("2006-01-02 15:04:05"))
 
 	err := tx.Commit()
 	if err != nil {

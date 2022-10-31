@@ -31,7 +31,7 @@ create table if not exists users (
     passwordhash text not null,
     passwordsalt text not null unique
 );`)
-	
+
 	batch.Queue(`
 create table if not exists orders (
     orderid bigint not null unique,
@@ -54,6 +54,8 @@ create table if not exists accrual (
 	if err != nil {
 		logger.Error("Error occurred while creating table", zap.Error(err))
 	}
+
+	logger.Info("Launched with pgx")
 
 	return &storage{
 		pool:   conn,

@@ -13,7 +13,7 @@ func (s storageLpq) GetWithdrawals(login string) ([]byte, error) {
 	dbResp := []dbWithdrawal{}
 	resp := []withdrawal{}
 
-	rows, err := s.conn.Query("select orderid, accrual, orderdate from orders where pointsspent = $1 and login = $2 order by orderdate;", true, login)
+	rows, err := s.conn.Query("select orderid, withdrawn, processed_at from withdrawals where login = $1 order by processed_at;", login)
 	if err != nil || rows.Err() != nil {
 		s.logger.Error("Error while getting withdrawals", zap.Error(err))
 		return nil, err
