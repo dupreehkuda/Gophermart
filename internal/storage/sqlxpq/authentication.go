@@ -1,8 +1,9 @@
 package sqlxpq
 
 import (
-	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
+
+	"github.com/shopspring/decimal"
 )
 
 // CreateUser inserts new user's data in the database

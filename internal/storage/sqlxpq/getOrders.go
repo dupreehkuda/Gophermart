@@ -2,9 +2,10 @@ package sqlxpq
 
 import (
 	"encoding/json"
-	"go.uber.org/zap"
 	"math"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 // GetOrders gets user's completed orders from the database
@@ -13,7 +14,7 @@ func (s storageLpq) GetOrders(login string) ([]byte, error) {
 	var data []order
 
 	rows, err := s.conn.Query("select orderid, status, accrual, orderdate from orders where login = $1 order by orderdate;", login)
-	if err != nil {
+	if err != nil || rows.Err() != nil {
 		s.logger.Error("Error while getting orders", zap.Error(err))
 		return nil, err
 	}

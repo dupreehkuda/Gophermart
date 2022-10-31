@@ -2,9 +2,10 @@ package sqlxpq
 
 import (
 	"encoding/json"
-	"go.uber.org/zap"
 	"math"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 // GetWithdrawals gets user's completed withdrawals from the database
@@ -13,7 +14,7 @@ func (s storageLpq) GetWithdrawals(login string) ([]byte, error) {
 	resp := []withdrawal{}
 
 	rows, err := s.conn.Query("select orderid, accrual, orderdate from orders where pointsspent = $1 and login = $2 order by orderdate;", true, login)
-	if err != nil {
+	if err != nil || rows.Err() != nil {
 		s.logger.Error("Error while getting withdrawals", zap.Error(err))
 		return nil, err
 	}

@@ -1,9 +1,10 @@
 package sqlxpq
 
 import (
-	i "github.com/dupreehkuda/Gophermart/internal"
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
+
+	i "github.com/dupreehkuda/Gophermart/internal"
 )
 
 // CheckPoints checks if user have enough points

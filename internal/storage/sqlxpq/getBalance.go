@@ -2,8 +2,9 @@ package sqlxpq
 
 import (
 	"encoding/json"
-	"go.uber.org/zap"
 	"math"
+
+	"go.uber.org/zap"
 )
 
 // GetBalance gets user's current balance from the database

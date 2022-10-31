@@ -25,8 +25,8 @@ func (s storageLpq) CheckOrderExistence(login string, orderID int) (bool, bool) 
 
 // NewOrder creates inserts new order in the database
 func (s storageLpq) NewOrder(login string, orderID int) error {
-	_, err := s.conn.Query("insert into orders(login, orderid, orderdate, status, accrual, pointsspent) values ($1, $2, $3, 'NEW', $4, $5);", login, orderID, time.Now().Format("2006-01-02 15:04:05"), decimal.Zero, false)
-	if err != nil {
+	rows, err := s.conn.Query("insert into orders(login, orderid, orderdate, status, accrual, pointsspent) values ($1, $2, $3, 'NEW', $4, $5);", login, orderID, time.Now().Format("2006-01-02 15:04:05"), decimal.Zero, false)
+	if err != nil || rows.Err() != nil {
 		s.logger.Error("Error while inserting order", zap.Error(err))
 		return err
 	}

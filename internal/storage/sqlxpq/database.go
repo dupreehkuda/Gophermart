@@ -36,7 +36,7 @@ create table if not exists accrual (
 
 // New creates a new instance of database layer and migrates it
 func New(path string, logger *zap.Logger) *storageLpq {
-	db, err := sqlx.Connect("postgres", path+"?sslmode=disable")
+	db, err := sqlx.Connect("postgres", path)
 	if err != nil {
 		logger.Error("Unable to connect db", zap.Error(err))
 	}
