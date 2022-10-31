@@ -34,8 +34,8 @@ create table if not exists accrual (
 );
 
 create table if not exists withdrawals (
-    orderid bigint not null unique references orders,
-    login text not null, 
+    orderid bigint not null unique,
+    login text not null primary key references users, 
     withdrawn numeric not null,
     processed_at timestamp
 );
