@@ -2,8 +2,6 @@ package storage
 
 import (
 	"context"
-	"time"
-
 	"github.com/jackc/pgx/v5"
 
 	i "github.com/dupreehkuda/Gophermart/internal"
@@ -56,8 +54,6 @@ func (s storage) WithdrawPoints(login string, order int, sum, current decimal.De
 
 	br := conn.SendBatch(context.Background(), batch)
 	defer s.batchClosing(br)
-
-	time.Sleep(time.Second * 5)
 
 	return nil
 }
