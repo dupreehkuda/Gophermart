@@ -32,9 +32,14 @@ func NewByConfig() *server {
 	log := logger.InitializeLogger()
 
 	cfg := configuration.New(log)
+
 	store := sqlxpq.New(cfg.DatabasePath, log)
+	store.CreateSchema()
+
 	act := actions.New(store, log, cfg.AccrualAddress)
+	
 	handle := handlers.New(store, act, log)
+
 	mware := middleware.New(act, log)
 
 	return &server{

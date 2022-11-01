@@ -48,12 +48,13 @@ func New(path string, logger *zap.Logger) *storageLpq {
 		logger.Error("Unable to connect db", zap.Error(err))
 	}
 
-	db.MustExec(schema)
-
-	logger.Info("Launched with sqlx")
-
 	return &storageLpq{
 		conn:   db,
 		logger: logger,
 	}
+}
+
+func (s storageLpq) CreateSchema() {
+	s.conn.MustExec(schema)
+	s.logger.Info("Launched with sqlx")
 }

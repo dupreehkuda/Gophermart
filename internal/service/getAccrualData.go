@@ -29,10 +29,15 @@ func (s *Service) updateOrderData() {
 		}
 		defer resp.Body.Close()
 
+		timeout, err := strconv.Atoi(resp.Header.Get("Retry-After"))
+		if err != nil {
+			s.logger.Error("Error extracting Retry-After header")
+		}
+
 		switch resp.StatusCode {
 		case http.StatusTooManyRequests:
 			s.logger.Info("A lot of requests", zap.Any("headers", resp.Request))
-			time.Sleep(time.Second * 2)
+			time.Sleep(time.Second * time.Duration(timeout))
 			s.OrderQueue <- order
 
 		case http.StatusInternalServerError:
