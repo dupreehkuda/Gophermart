@@ -5,6 +5,7 @@ import (
 	"math/big"
 )
 
+// RandSymbols returns n-char string of random characters
 func RandSymbols(n int) (string, error) {
 	const letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 	ret := make([]byte, n)

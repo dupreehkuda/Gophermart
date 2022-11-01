@@ -7,10 +7,14 @@ import (
 )
 
 type middleware struct {
-	processor i.Processor
+	processor i.Actions
 	logger    *zap.Logger
 }
 
-func New(processor i.Processor, logger *zap.Logger) *middleware {
-	return &middleware{processor: processor, logger: logger}
+// New creates new instance of middleware
+func New(processor i.Actions, logger *zap.Logger) *middleware {
+	return &middleware{
+		processor: processor,
+		logger:    logger,
+	}
 }

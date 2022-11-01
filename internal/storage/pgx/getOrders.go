@@ -1,29 +1,16 @@
-package storage
+package pgx
 
 import (
 	"context"
 	"encoding/json"
-	"log"
+	"math"
 	"time"
 
-	"github.com/jackc/pgtype"
+	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
 	"go.uber.org/zap"
 )
 
-type dbOrder struct {
-	Number     int              `db:"orderID"`
-	Status     string           `db:"status"`
-	Accrual    pgtype.Float4    `db:"accrual"`
-	UploadedAt pgtype.Timestamp `db:"orderdate"`
-}
-
-type order struct {
-	Number     int     `json:"number"`
-	Status     string  `json:"status"`
-	Accrual    float64 `json:"accrual,omitempty"`
-	UploadedAt string  `json:"uploaded_at"`
-}
-
+// GetOrders gets user's completed orders from the database
 func (s storage) GetOrders(login string) ([]byte, error) {
 	var dataFromDB []dbOrder
 	var data []order
@@ -34,6 +21,8 @@ func (s storage) GetOrders(login string) ([]byte, error) {
 		return nil, err
 	}
 	defer conn.Release()
+
+	pgxdecimal.Register(conn.Conn().TypeMap())
 
 	rows, err := conn.Query(context.Background(), "select orderid, status, accrual, orderdate from orders where login = $1 order by orderdate;", login)
 	if err != nil {
@@ -46,17 +35,18 @@ func (s storage) GetOrders(login string) ([]byte, error) {
 		var d dbOrder
 		err := rows.Scan(&d.Number, &d.Status, &d.Accrual, &d.UploadedAt)
 		if err != nil {
-			log.Fatal(err)
+			s.logger.Error("Error while scanning rows", zap.Error(err))
+			return nil, err
 		}
 		dataFromDB = append(dataFromDB, d)
 	}
 
-	// todo: figure out how to write without empty fields
 	for _, val := range dataFromDB {
+		f, _ := val.Accrual.Float64()
 		data = append(data, order{
 			Number:     val.Number,
 			Status:     val.Status,
-			Accrual:    float64(val.Accrual.Float),
+			Accrual:    math.Round(f*100) / 100,
 			UploadedAt: val.UploadedAt.Time.Format(time.RFC3339),
 		})
 	}

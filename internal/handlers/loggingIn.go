@@ -2,12 +2,15 @@ package handlers
 
 import (
 	"encoding/json"
-	"go.uber.org/zap"
+	"errors"
 	"net/http"
 
-	"github.com/dupreehkuda/Gophermart/internal"
+	"go.uber.org/zap"
+
+	i "github.com/dupreehkuda/Gophermart/internal"
 )
 
+// Login handles an action of user logging in
 func (h handlers) Login(w http.ResponseWriter, r *http.Request) {
 	var logCredit Credentials
 
@@ -25,20 +28,20 @@ func (h handlers) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, logged, err := h.processor.Login(logCredit.Login, logCredit.Password)
+	err = h.actions.Login(logCredit.Login, logCredit.Password)
 	if err != nil {
 		h.logger.Error("Unable to authorize", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if !logged {
+	if errors.Is(err, i.ErrWrongCredentials) {
 		h.logger.Error("Login or password is wrong", zap.Error(err))
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	token, err := internal.GenerateJWT(logCredit.Login)
+	token, err := i.GenerateJWT(logCredit.Login)
 	if err != nil {
 		h.logger.Error("Error while generating jwt", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
@@ -49,6 +52,4 @@ func (h handlers) Login(w http.ResponseWriter, r *http.Request) {
 		Name:  "JWT",
 		Value: token,
 	})
-
-	w.WriteHeader(http.StatusOK)
 }

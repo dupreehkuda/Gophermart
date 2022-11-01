@@ -2,10 +2,11 @@ package middleware
 
 import (
 	"compress/gzip"
-	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"strings"
+
+	"go.uber.org/zap"
 )
 
 type gzipWriter struct {
@@ -23,6 +24,7 @@ func (g *gzipWriter) Write(data []byte) (int, error) {
 	return g.writer.Write(data)
 }
 
+// CheckCompression checks for request compression and adds a gzip reader
 func (m middleware) CheckCompression(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !strings.Contains(r.Header.Get("Content-Encoding"), "gzip") {
@@ -49,6 +51,7 @@ func (m middleware) CheckCompression(next http.Handler) http.Handler {
 	})
 }
 
+// WriteCompressed checks for client's ability to read gzip and adds a writer
 func (m middleware) WriteCompressed(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {

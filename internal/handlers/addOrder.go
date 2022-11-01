@@ -1,15 +1,20 @@
 package handlers
 
 import (
+	"errors"
 	"io"
 	"net/http"
 	"strconv"
 
+	i "github.com/dupreehkuda/Gophermart/internal"
+
 	"go.uber.org/zap"
 )
 
+// AddOrder handles action of processing new orders
 func (h handlers) AddOrder(w http.ResponseWriter, r *http.Request) {
-	login := r.Context().Value("login").(string)
+	var ctxKey i.LoginKey = "login"
+	login := r.Context().Value(ctxKey).(string)
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil || len(body) == 0 {
@@ -25,24 +30,25 @@ func (h handlers) AddOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	valid, exists, usersOrder, err := h.processor.NewOrder(login, order)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		h.logger.Error("Adding order error", zap.Error(err))
+	err = h.actions.NewOrder(login, order)
+	if err == nil {
+		w.WriteHeader(http.StatusAccepted)
 		return
 	}
 
 	switch {
-	case !valid:
+	case errors.Is(err, i.ErrOrderInvalidNum):
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
-	case exists && !usersOrder:
+	case errors.Is(err, i.ErrOrderOccupied):
 		w.WriteHeader(http.StatusConflict)
 		return
-	case exists && usersOrder:
+	case errors.Is(err, i.ErrOrderUploaded):
 		w.WriteHeader(http.StatusOK)
 		return
 	default:
-		w.WriteHeader(http.StatusAccepted)
+		w.WriteHeader(http.StatusInternalServerError)
+		h.logger.Error("Adding order error", zap.Error(err))
+		return
 	}
 }

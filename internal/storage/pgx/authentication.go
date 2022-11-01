@@ -1,11 +1,15 @@
-package storage
+package pgx
 
 import (
 	"context"
 
+	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
+	"github.com/jackc/pgx/v5"
+	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
 )
 
+// CreateUser inserts new user's data in the database
 func (s storage) CreateUser(login string, passwordHash string, passwordSalt string) error {
 	conn, err := s.pool.Acquire(context.Background())
 	if err != nil {
@@ -14,15 +18,20 @@ func (s storage) CreateUser(login string, passwordHash string, passwordSalt stri
 	}
 	defer conn.Release()
 
-	_, err = conn.Query(context.Background(), "INSERT INTO users(login, passwordhash, passwordsalt) VALUES ($1, $2, $3);", login, passwordHash, passwordSalt)
-	if err != nil {
-		s.logger.Error("Error while inserting", zap.Error(err))
-		return err
-	}
+	pgxdecimal.Register(conn.Conn().TypeMap())
+
+	batch := &pgx.Batch{}
+
+	batch.Queue("INSERT INTO users(login, passwordhash, passwordsalt) VALUES ($1, $2, $3);", login, passwordHash, passwordSalt)
+	batch.Queue("INSERT INTO accrual(login, points, withdrawn) VALUES ($1, $2, $3);", login, decimal.Zero, decimal.Zero)
+
+	br := conn.SendBatch(context.Background(), batch)
+	defer s.batchClosing(br)
 
 	return nil
 }
 
+// LoginUser gets user's data from the database to check for correct credentials
 func (s storage) LoginUser(login string) (string, string, error) {
 	var (
 		passwordHash string
@@ -44,7 +53,8 @@ func (s storage) LoginUser(login string) (string, string, error) {
 	return passwordHash, passwordSalt, nil
 }
 
-func (s storage) CheckUser(login string) (bool, error) {
+// CheckDuplicateUser checks if user is already existing
+func (s storage) CheckDuplicateUser(login string) (bool, error) {
 	var dbLogin string
 
 	conn, err := s.pool.Acquire(context.Background())

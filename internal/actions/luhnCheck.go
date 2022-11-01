@@ -1,5 +1,6 @@
-package processors
+package actions
 
+// luhnValid checks if number is luhn valid
 func luhnValid(number int) bool {
 	return (number%10+checksum(number/10))%10 == 0
 }

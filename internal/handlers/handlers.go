@@ -1,16 +1,22 @@
 package handlers
 
 import (
-	i "github.com/dupreehkuda/Gophermart/internal/interfaces"
 	"go.uber.org/zap"
+
+	i "github.com/dupreehkuda/Gophermart/internal/interfaces"
 )
 
 type handlers struct {
-	storage   i.Stored
-	processor i.Processor
-	logger    *zap.Logger
+	storage i.Stored
+	actions i.Actions
+	logger  *zap.Logger
 }
 
-func New(storage i.Stored, processor i.Processor, logger *zap.Logger) *handlers {
-	return &handlers{storage: storage, processor: processor, logger: logger}
+// New creates new instance of handlers
+func New(storage i.Stored, processor i.Actions, logger *zap.Logger) *handlers {
+	return &handlers{
+		storage: storage,
+		actions: processor,
+		logger:  logger,
+	}
 }

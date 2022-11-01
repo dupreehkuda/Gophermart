@@ -1,14 +1,19 @@
 package handlers
 
 import (
-	"go.uber.org/zap"
 	"net/http"
+
+	"go.uber.org/zap"
+
+	i "github.com/dupreehkuda/Gophermart/internal"
 )
 
+// GetOrders handles action of getting a list of user's completed orders
 func (h handlers) GetOrders(w http.ResponseWriter, r *http.Request) {
-	login := r.Context().Value("login").(string)
+	var ctxKey i.LoginKey = "login"
+	login := r.Context().Value(ctxKey).(string)
 
-	data, err := h.processor.GetOrders(login)
+	data, err := h.actions.GetOrders(login)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		h.logger.Error("Getting order error", zap.Error(err))
@@ -21,7 +26,6 @@ func (h handlers) GetOrders(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(data)
 	if err != nil {
